@@ -1,0 +1,46 @@
+{
+  "type": "footer",
+  "name": "t:groups.footer_group.name",
+  "sections": {
+    "footer": {
+      "type": "footer",
+      "blocks": {
+        "text": {
+          "type": "text",
+          "settings": {
+            "title": "About",
+            "text": ""
+          }
+        },
+        "links": {
+          "type": "links",
+          "settings": {
+            "title": "Links",
+            "link_list": "links"
+          }
+        },
+        "newsletter": {
+          "type": "newsletter",
+          "settings": {
+            "title": "Newsletter",
+            "text": "<p>We only send messages about once a month and only about good things. Subscribe below.<\/p>"
+          }
+        }
+      },
+      "block_order": [
+        "text",
+        "links",
+        "newsletter"
+      ],
+      "settings": {
+        "show_locale_selector": true,
+        "show_currency_selector": true,
+        "show_social_icons": true,
+        "show_payment_icons": true
+      }
+    }
+  },
+  "order": [
+    "footer"
+  ]
+}

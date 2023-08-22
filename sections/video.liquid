@@ -1,0 +1,150 @@
+{% liquid
+  assign heading = section.settings.title
+  assign subheading = section.settings.subheading
+  assign image = section.settings.image
+  assign video = section.settings.video_url.url
+  assign video_id = section.settings.video_url.id
+  assign video_type = section.settings.video_url.type
+  assign opacity_overlay = section.settings.opacity_overlay
+  assign color_overlay = section.settings.color_overlay
+  assign color_text = section.settings.color_text
+  assign opacity = opacity_overlay | divided_by: 100.0
+  assign color_overlay_gradient = section.settings.color_overlay_gradient
+%}
+
+<section
+  class="video"
+  data-section-id="{{ section.id }}"
+  data-section-type="video"
+  data-video-id="{{ video_id }}"
+  data-video-type="{{ video_type }}"
+  style="
+    --color-overlay: {{ color_overlay }};
+    --color-overlay-background: {{ color_overlay }};
+    --overlay-opacity: {{ opacity }};
+    {% if color_overlay_gradient != blank %}
+      --gradient-background: {{ color_overlay_gradient }};
+    {% endif %}
+    --color-border: {{ color_text | color_modify: 'alpha', 0.3 }};
+    --color-text: {{ color_text }};
+  "
+>
+  <div class="video__wrapper borders-nfw">
+    {%- if video != blank -%}
+      <div class="video__container" data-video-container>
+        <div class="video__player" tabindex="-1" data-video-player></div>
+      </div>
+    {%- endif -%}
+
+    {%- if image != blank -%}
+      {% render 'image',
+        image: image,
+        wrapper_class: 'video__image visible',
+        focal_point: 'image_presentation',
+        disable_style: true
+      %}
+    {%- endif -%}
+
+    <div class="video__overlay visible" data-overlay>
+      <div class="video__overlay-content">
+        <button class="video__play" data-play-button title="{{ 'general.accessibility.play' | t}}">
+          {% render 'icon', icon: 'play_arrow' %}
+        </button>
+        <div>
+          {%- if heading -%}
+            <h3 class="video__overlay-heading ff-heading fs-heading-small">{{ heading }}</h3>
+          {%- endif -%}
+
+          {%- if subheading -%}
+            <div class="video__overlay-subheading ff-body fs-body-base">{{ subheading }}</div>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="video__mobile-text contrast">
+    {%- if heading -%}
+      <h3 class="video__mobile-heading ff-heading fs-heading-base c-heading">{{ heading }}</h3>
+    {%- endif -%}
+
+    {%- if subheading -%}
+      <div class="video__mobile-subheading ff-body fs-body-base c-subheading">{{ subheading }}</div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "t:sections.video.name",
+  "class": "grid-section",
+  "disabled_on": {
+    "groups": ["header", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "id": "title",
+      "type": "text",
+      "label": "t:sections.video.settings.title.label"
+    },
+    {
+      "id": "subheading",
+      "type": "richtext",
+      "label": "t:sections.video.settings.subheading.label"
+    },
+    {
+      "id": "video_url",
+      "type": "video_url",
+      "label": "t:sections.video.settings.video_url.label",
+      "accept": ["youtube", "vimeo"],
+      "default": "https://www.youtube.com/watch?v=_9VUPq3SxOc"
+    },
+    {
+      "id": "image",
+      "type": "image_picker",
+      "label": "t:sections.video.settings.image.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.video.settings.style_header.content"
+    },
+    {
+      "id": "opacity_overlay",
+      "type": "range",
+      "label": "t:sections.video.settings.opacity_overlay.label",
+      "min": 0,
+      "max": 100,
+      "step": 10,
+      "default": 60,
+      "unit": "%"
+    },
+    {
+      "id": "color_overlay",
+      "type": "color",
+      "label": "t:sections.video.settings.color_overlay.label",
+      "default": "#000000"
+    },
+    {
+      "id": "color_overlay_gradient",
+      "type": "color_background",
+      "label": "t:shared.color.color_overlay_gradient.label"
+    },
+    {
+      "id": "color_text",
+      "type": "color",
+      "label": "t:sections.video.settings.color_text.label",
+      "default": "#ffffff"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.video.presets.name",
+      "category": "Video",
+      "settings": {
+        "title": "Featured video",
+        "subheading": "<p>Use this section for interviews, product promotions, demo reels, and more.</p>"
+      }
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,7 @@
+<div class="section-header {{ classes }}">
+  <h3 class="ff-heading fs-heading-base c-heading" data-theme-editor-setting="section.{{ section.id }}.title">{{ heading }}</h3>
+
+  {%- if url != blank and link_text != blank -%}
+    <a class="fs-body-base link" href="{{ url }}" data-theme-editor-setting="section.{{ section.id }}.link_text">{{ link_text }}</a>
+  {%- endif -%}
+</div>

@@ -1,0 +1,412 @@
+{
+  "sections": {
+    "slideshow-1": {
+      "type": "slideshow",
+      "blocks": {
+        "slide-1": {
+          "type": "image",
+          "settings": {
+            "image": "shopify:\/\/shop_images\/swanky_abode_home.jpg",
+            "focal_point": "image_presentation",
+            "focal_point_mobile": "image_presentation",
+            "video_url": "",
+            "meta": "",
+            "title": "",
+            "subheading": "",
+            "max_width_subheading": 30,
+            "link_text": "",
+            "link": "#",
+            "alignment": "left_center",
+            "color_heading": "#ffffff",
+            "color_subheading": "#b8b8b8",
+            "color_text_button": "#ffffff",
+            "color_background_button": "#000000",
+            "color_overlay": "#000000",
+            "color_overlay_gradient": "",
+            "opacity_overlay": 0
+          }
+        },
+        "1c757b01-a459-4837-a634-30ab99075eef": {
+          "type": "image",
+          "settings": {
+            "image": "shopify:\/\/shop_images\/swanky_abode_bertu_suelo_walnut_sofa_leather.jpg",
+            "focal_point": "image_presentation",
+            "focal_point_mobile": "image_presentation",
+            "video_url": "",
+            "meta": "",
+            "title": "",
+            "subheading": "",
+            "max_width_subheading": 30,
+            "link_text": "",
+            "link": "",
+            "alignment": "left_center",
+            "color_heading": "#ffffff",
+            "color_subheading": "#b8b8b8",
+            "color_text_button": "#ffffff",
+            "color_background_button": "#000000",
+            "color_overlay": "#000000",
+            "color_overlay_gradient": "",
+            "opacity_overlay": 0
+          }
+        },
+        "75501f18-33b4-435b-9197-20331bcabec7": {
+          "type": "image",
+          "settings": {
+            "image": "shopify:\/\/shop_images\/Lawrence-Peabody-Wicker-Lounge-Chairs-Walnut-10.jpg",
+            "focal_point": "image_presentation",
+            "focal_point_mobile": "image_presentation",
+            "video_url": "",
+            "meta": "",
+            "title": "",
+            "subheading": "",
+            "max_width_subheading": 30,
+            "link_text": "",
+            "link": "",
+            "alignment": "left_center",
+            "color_heading": "#ffffff",
+            "color_subheading": "#b8b8b8",
+            "color_text_button": "#ffffff",
+            "color_background_button": "#000000",
+            "color_overlay": "#000000",
+            "color_overlay_gradient": "",
+            "opacity_overlay": 0
+          }
+        },
+        "a1cdee8c-1897-4f7d-adc5-79c6ccd6a250": {
+          "type": "image",
+          "settings": {
+            "image": "shopify:\/\/shop_images\/addison_jones_photography_flowers.jpg",
+            "focal_point": "image_presentation",
+            "focal_point_mobile": "image_presentation",
+            "video_url": "",
+            "meta": "",
+            "title": "",
+            "subheading": "",
+            "max_width_subheading": 30,
+            "link_text": "",
+            "link": "",
+            "alignment": "left_center",
+            "color_heading": "#ffffff",
+            "color_subheading": "#b8b8b8",
+            "color_text_button": "#ffffff",
+            "color_background_button": "#000000",
+            "color_overlay": "#000000",
+            "color_overlay_gradient": "",
+            "opacity_overlay": 0
+          }
+        },
+        "ae67c3f3-006c-440b-a51b-c4d069cfdb1e": {
+          "type": "image",
+          "settings": {
+            "image": "shopify:\/\/shop_images\/chili_dinette_set.jpg",
+            "focal_point": "image_presentation",
+            "focal_point_mobile": "image_presentation",
+            "video_url": "",
+            "meta": "",
+            "title": "",
+            "subheading": "",
+            "max_width_subheading": 30,
+            "link_text": "",
+            "link": "",
+            "alignment": "left_center",
+            "color_heading": "#ffffff",
+            "color_subheading": "#b8b8b8",
+            "color_text_button": "#ffffff",
+            "color_background_button": "#000000",
+            "color_overlay": "#000000",
+            "color_overlay_gradient": "",
+            "opacity_overlay": 0
+          }
+        }
+      },
+      "block_order": [
+        "slide-1",
+        "1c757b01-a459-4837-a634-30ab99075eef",
+        "75501f18-33b4-435b-9197-20331bcabec7",
+        "a1cdee8c-1897-4f7d-adc5-79c6ccd6a250",
+        "ae67c3f3-006c-440b-a51b-c4d069cfdb1e"
+      ],
+      "settings": {
+        "desktop_height": 100,
+        "mobile_height": 100,
+        "duration_autoplay": 2,
+        "enable_parallax": false,
+        "enable_full_width": true,
+        "color_dot": "#ffffff"
+      }
+    },
+    "2-column-mosaic-grid": {
+      "type": "2-column-mosaic-grid",
+      "blocks": {
+        "small_square-1": {
+          "type": "small_square",
+          "settings": {
+            "image": "shopify:\/\/shop_images\/craft_associates_furniture_lawrence_peabody_wicker_lounge_chairs.jpg",
+            "video_url": "",
+            "media_fit": "cover",
+            "focal_point": "center_center",
+            "title": "Craft Associates",
+            "subheading": "",
+            "text_max_width": 29,
+            "link_text": "Shop Craft",
+            "link": "shopify:\/\/collections\/modern-chairs-for-craft",
+            "text_position": "center_center",
+            "background_color": "",
+            "color_text": "#ffffff",
+            "color_subheading": "#b8b8b8",
+            "color_background_button": "#000000",
+            "color_text_button": "#ffffff",
+            "overlay_color": "#000000",
+            "color_overlay_gradient": "",
+            "overlay_opacity": 10
+          }
+        },
+        "small_square-2": {
+          "type": "small_square",
+          "settings": {
+            "image": "shopify:\/\/shop_images\/bertu_home_stumps_and_farmhouse_table_c30caec5-3f5b-408d-a6c7-5147ebccb343.jpg",
+            "video_url": "",
+            "media_fit": "cover",
+            "focal_point": "image_presentation",
+            "title": "Bertu Home",
+            "subheading": "",
+            "text_max_width": 20,
+            "link_text": "Shop Bertu",
+            "link": "shopify:\/\/collections\/stumps-and-side-tables",
+            "text_position": "center_center",
+            "background_color": "",
+            "color_text": "#ffffff",
+            "color_subheading": "#b8b8b8",
+            "color_background_button": "#000000",
+            "color_text_button": "#ffffff",
+            "overlay_color": "#000000",
+            "color_overlay_gradient": "",
+            "overlay_opacity": 0
+          }
+        },
+        "29a448b9-b3e9-43d7-a569-59a08096a7f0": {
+          "type": "small_square",
+          "settings": {
+            "image": "shopify:\/\/shop_images\/addison_jones_photography.jpg",
+            "video_url": "",
+            "media_fit": "cover",
+            "focal_point": "image_presentation",
+            "title": "Addison Jones Studio - Art and Photography",
+            "subheading": "",
+            "text_max_width": 28,
+            "link_text": "Shop Studio",
+            "link": "shopify:\/\/collections\/objects",
+            "text_position": "center_center",
+            "background_color": "",
+            "color_text": "#ffffff",
+            "color_subheading": "#b8b8b8",
+            "color_background_button": "#000000",
+            "color_text_button": "#ffffff",
+            "overlay_color": "#000000",
+            "color_overlay_gradient": "",
+            "overlay_opacity": 11
+          }
+        },
+        "6eaec145-ca88-4a8c-b6ee-16e572f3f34b": {
+          "type": "small_square",
+          "settings": {
+            "image": "shopify:\/\/shop_images\/swanky_modern_showroom_jens_risom_sofa.jpg",
+            "video_url": "",
+            "media_fit": "cover",
+            "focal_point": "image_presentation",
+            "title": "Swanky Vintage",
+            "subheading": "",
+            "text_max_width": 28,
+            "link_text": "Shop Vintage",
+            "link": "shopify:\/\/collections\/seating",
+            "text_position": "center_center",
+            "background_color": "",
+            "color_text": "#ffffff",
+            "color_subheading": "#b8b8b8",
+            "color_background_button": "#000000",
+            "color_text_button": "#ffffff",
+            "overlay_color": "#000000",
+            "color_overlay_gradient": "",
+            "overlay_opacity": 0
+          }
+        }
+      },
+      "block_order": [
+        "small_square-1",
+        "small_square-2",
+        "29a448b9-b3e9-43d7-a569-59a08096a7f0",
+        "6eaec145-ca88-4a8c-b6ee-16e572f3f34b"
+      ],
+      "settings": {
+        "enable_full_width": false
+      }
+    },
+    "carousel-1": {
+      "type": "carousel",
+      "blocks": {
+        "1600984449963-1": {
+          "type": "image",
+          "settings": {
+            "image": "shopify:\/\/shop_images\/Craft-Associates-Canadian-Sofa-06.jpg",
+            "meta": "",
+            "title": "Sofas",
+            "subheading": "<p>Use this Section to showcase a rotating gallery of images.<\/p>",
+            "max_width_subheading": 34,
+            "link_text": "Shop our Sofas",
+            "link": "shopify:\/\/collections\/modern-sofas",
+            "alignment": "left_split",
+            "opacity_overlay": 0
+          }
+        },
+        "1600984449963-2": {
+          "type": "image",
+          "settings": {
+            "image": "shopify:\/\/shop_images\/Craft_Associates_0031.jpg",
+            "meta": "",
+            "title": "Modern Chairs",
+            "subheading": "<p>Use this Section to showcase a rotating gallery of images.<\/p>",
+            "max_width_subheading": 34,
+            "link_text": "Shop all Modern Chairs",
+            "link": "shopify:\/\/collections\/modern-lounge-chairs",
+            "alignment": "left_split",
+            "opacity_overlay": 0
+          }
+        },
+        "1600984449963-0": {
+          "type": "image",
+          "settings": {
+            "image": "shopify:\/\/shop_images\/swanky_abode_art.jpg",
+            "meta": "",
+            "title": "Art",
+            "subheading": "<p>Use this Section to showcase a rotating gallery of images.<\/p>",
+            "max_width_subheading": 34,
+            "link_text": "Art",
+            "link": "shopify:\/\/collections\/objects",
+            "alignment": "left_split",
+            "opacity_overlay": 0
+          }
+        }
+      },
+      "block_order": [
+        "1600984449963-1",
+        "1600984449963-2",
+        "1600984449963-0"
+      ],
+      "settings": {
+        "height_mobile": 80,
+        "color_overlay": "#000000",
+        "color_overlay_gradient": "",
+        "color_heading": "#ffffff",
+        "color_subheading": "#ffffff",
+        "color_background_button": "#000000",
+        "color_text_button": "#ffffff"
+      }
+    },
+    "featured-products-1": {
+      "type": "featured-products",
+      "blocks": {
+        "1600980531412": {
+          "type": "product",
+          "settings": {
+            "product": "modern-patio-furniture-suelo-slatted-loveseat-for-bertu-home"
+          }
+        },
+        "1600980543030": {
+          "type": "product",
+          "settings": {
+            "product": "modern-patio-furniture-suelo-slatted-ottoman-for"
+          }
+        },
+        "1600980550720": {
+          "type": "product",
+          "settings": {
+            "product": "large-tree-stump-side-tables-for-bertu-home-1219-black"
+          }
+        }
+      },
+      "block_order": [
+        "1600980531412",
+        "1600980543030",
+        "1600980550720"
+      ],
+      "settings": {
+        "image": "shopify:\/\/shop_images\/bertu-outdoor-slatted-sofa-teal-01_557c5288-cf37-4ca1-9cb3-f4521ef9c7b7.jpg",
+        "image_position": "left",
+        "title": "Featured Products",
+        "subheading": "Use this section to show off a few of your favourite products",
+        "link": "\/",
+        "link_text": "Shop the collection",
+        "enable_contrast": true,
+        "enable_full_width": false
+      }
+    },
+    "d029ffd7-ee5a-45a9-bec7-14223f69e4b5": {
+      "type": "carousel",
+      "blocks": {
+        "template--14621535699007__d029ffd7-ee5a-45a9-bec7-14223f69e4b5-1686314981fb8da13f-0": {
+          "type": "image",
+          "settings": {
+            "image": "shopify:\/\/shop_images\/october-17-highpoint-show-004.jpg",
+            "meta": "",
+            "title": "Showrooms",
+            "subheading": "",
+            "max_width_subheading": 28,
+            "link_text": "Showrooms",
+            "link": "shopify:\/\/blogs\/news\/craft-modern-showroom-high-point",
+            "alignment": "center_center",
+            "opacity_overlay": 0
+          }
+        },
+        "template--14621535699007__d029ffd7-ee5a-45a9-bec7-14223f69e4b5-1686314981fb8da13f-1": {
+          "type": "image",
+          "settings": {
+            "image": "shopify:\/\/shop_images\/craft-behinnd-the-scenes-042.jpg",
+            "meta": "Meet the Family",
+            "title": "",
+            "subheading": "",
+            "max_width_subheading": 28,
+            "link_text": "Meet the Family",
+            "link": "shopify:\/\/pages\/about-us",
+            "alignment": "center_center",
+            "opacity_overlay": 0
+          }
+        },
+        "template--14621535699007__d029ffd7-ee5a-45a9-bec7-14223f69e4b5-1686314981fb8da13f-2": {
+          "type": "image",
+          "settings": {
+            "image": "shopify:\/\/shop_images\/I07A3428copy.jpg",
+            "meta": "Meet the Team",
+            "title": "",
+            "subheading": "",
+            "max_width_subheading": 28,
+            "link_text": "Meet the Team",
+            "link": "shopify:\/\/blogs\/contact-us",
+            "alignment": "center_center",
+            "opacity_overlay": 0
+          }
+        }
+      },
+      "block_order": [
+        "template--14621535699007__d029ffd7-ee5a-45a9-bec7-14223f69e4b5-1686314981fb8da13f-0",
+        "template--14621535699007__d029ffd7-ee5a-45a9-bec7-14223f69e4b5-1686314981fb8da13f-1",
+        "template--14621535699007__d029ffd7-ee5a-45a9-bec7-14223f69e4b5-1686314981fb8da13f-2"
+      ],
+      "settings": {
+        "height_mobile": 80,
+        "color_overlay": "#000000",
+        "color_overlay_gradient": "",
+        "color_heading": "#000000",
+        "color_subheading": "#b8b8b8",
+        "color_background_button": "#000000",
+        "color_text_button": "#ffffff"
+      }
+    }
+  },
+  "order": [
+    "slideshow-1",
+    "2-column-mosaic-grid",
+    "carousel-1",
+    "featured-products-1",
+    "d029ffd7-ee5a-45a9-bec7-14223f69e4b5"
+  ]
+}

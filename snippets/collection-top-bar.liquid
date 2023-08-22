@@ -1,0 +1,44 @@
+{%- capture content -%}
+  {%- if results.filters or results.sort_by != blank -%}
+    {%- for filter in results.filters -%}
+      {%- for value in filter.active_values -%}  
+        <a href="{{ value.url_to_remove }}" class="pill pill--solid fs-body-base no-transition" data-remove-filter data-name="{{ value.param_name }}" data-value="{{ value.value }}" data-value-escaped="{{ value.value | url_escape }}">
+            {{filter.label}}:
+            {{ value.label | escape }}
+            {% render 'icon' with icon: 'close' %}
+        </a>
+      {%- endfor -%}
+      {%- if filter.type == "price_range" -%}
+        {%- if filter.min_value.value != nil or filter.max_value.value != nil -%}
+          <a href="{{ filter.url_to_remove }}" class="pill pill--solid fs-body-base no-transition" data-remove-range>
+              {{filter.label}}:&nbsp;
+              {%- if filter.min_value.value -%}{{ filter.min_value.value | money }}{%- else -%}{{ 0 | money }}{%- endif -%} - {%- if filter.max_value.value -%}{{ filter.max_value.value | money }}{%- else -%}{{ filter.range_max | money }}{%- endif -%}
+              {% render 'icon' with icon: 'close' %}
+          </a>
+        {%- endif -%}
+      {%- endif -%}
+    {%- endfor -%}
+    {%- if results.sort_by != blank -%}
+      {% comment %} Would be nice not to loop to get the formatted label {% endcomment %}
+      {%- for option in results.sort_options -%}
+        {%-if results.sort_by == option.value -%}
+          {%- assign label = option.name -%}
+          {%- assign value = option.value -%}
+        {%- endif -%}
+      {%- endfor -%}
+      <a href="#" class="pill pill--solid fs-body-base no-transition" data-remove-filter data-filter="filter-{{ label | handleize | escape }}" data-sort-pill data-pill="sort" data-name="sort_by" data-value="{{ value }}" data-value-escaped="{{ value | url_escape }}">
+        Sort: {{ label }}
+        {% render 'icon' with icon: 'close' %}
+      </a>
+    {%- endif -%}
+  {%- endif -%}
+{%- endcapture -%}
+{% if content and content.size > 0 %}
+  <div class="collection-top-bar">
+    <div class="collection-top-bar__active-elements">
+      {{content}}
+
+      <div class="space"></div>
+    </div>
+  </div>
+{% endif %}

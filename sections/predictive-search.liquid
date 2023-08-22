@@ -1,0 +1,165 @@
+{%- liquid
+  assign total_results = predictive_search.resources.products.size | plus: predictive_search.resources.queries.size | plus: predictive_search.resources.collections.size | plus: predictive_search.resources.pages.size | plus: predictive_search.resources.articles.size
+-%}
+
+{%- if predictive_search.performed -%}
+  {%- for query in predictive_search.resources.queries -%}
+    {%- if forloop.index == 1 -%}
+      <div class="quick-search__header ff-heading fs-heading-3-base">{{ 'search.headings.suggestions' | t }}</div>
+    {%- endif -%}
+
+    <a href="{{ query.url }}" class="quick-search__result quick-search__result--query">
+      <p class="quick-search__result-query" aria-label="{{ query.text }}">
+        {{ query.styled_text }}
+      </p>
+    </a>
+  {%- endfor -%}
+
+  {%- for product in predictive_search.resources.products -%}
+    {%- if forloop.index == 1 -%}
+      <div class="quick-search__header ff-heading fs-heading-3-base">{{ 'search.headings.products' | t }}</div>
+    {%- endif -%}
+
+    <a class="quick-search__result" href="{{ product.url }}">
+      <div class="quick-search__result-image">
+        {%- if product.featured_media -%}
+          <img
+            src="{{ product.featured_media | image_url: width: 120 }}"
+            alt="{{ product.featured_media.alt }}"
+            width="120"
+            height="{{ 120 | divided_by: product.featured_media.preview_image.aspect_ratio }}"
+            loading="lazy"
+          >
+        {%- else -%}
+          {% render 'icon', icon: 'abc' %}
+        {%- endif -%}
+      </div>
+      <div class="quick-search__result-details ff-body fs-body-small">
+        <div class="quick-search__result-heading">{{ product.title }}</div>
+        {%- if settings.search_show_price or settings.search_show_vendor -%}
+          <div class="quick-search__result-subheading">
+            {%- if settings.search_show_vendor and product.vendor -%}
+              <span class="quick-search__result-vendor">{{ product.vendor }}</span>
+
+              {%- if settings.search_show_price -%}
+                <span class="quick-search__result-bullet">&bull;</span>
+              {%- endif -%}
+            {%- endif -%}
+
+            {%- if settings.search_show_price -%}
+              {% if product.compare_at_price > product.price %}
+                <span class="visually-hidden">{{ 'products.product.regular_price' | t }}</span>
+                <s class="t-subdued">
+                  {{- product.compare_at_price | money -}}
+                  {%- if settings.currency_code_enabled %} {{ cart.currency.iso_code }}{% endif -%}
+                </s>
+
+                {%- if product.price_varies -%}
+                  {%- assign sale_price = product.price | money -%}
+                  {{ 'products.product.on_sale_from_html' | t: price: sale_price -}}
+                  {%- if settings.currency_code_enabled %} {{ cart.currency.iso_code }}{% endif %}
+                {%- else -%}
+                  <span class="sale">
+                    {{- product.price | money -}}
+                    {%- if settings.currency_code_enabled %} {{ cart.currency.iso_code }}{% endif -%}
+                  </span>
+                {%- endif -%}
+
+              {%- else -%}
+                {%- if product.price_varies -%}
+                  {%- assign price = product.price | money -%}
+                  {{ 'products.product.from_lowest_price_html' | t: lowest_price: price -}}
+                  {%- if settings.currency_code_enabled %} {{ cart.currency.iso_code }}{% endif %}
+                {%- else -%}
+                  <span class="product-item__price">
+                    {{- product.price | money -}}
+                    {%- if settings.currency_code_enabled %} {{ cart.currency.iso_code }}{% endif -%}
+                  </span>
+                {%- endif -%}
+              {% endif %}
+
+              {%- render 'unit-price', item: product.selected_or_first_available_variant -%}
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+      </div>
+    </a>
+  {%- endfor -%}
+
+  {%- for collection in predictive_search.resources.collections -%}
+    {%- if forloop.index == 1 -%}
+      <div class="quick-search__header ff-heading fs-heading-3-base">{{ 'search.headings.collections' | t }}</div>
+    {%- endif -%}
+
+    <a class="quick-search__result" href="{{ collection.url }}">
+      <div class="quick-search__result-image">
+        {%- assign collection_image = collection.image
+          | default: collection.products.first.featured_media.preview_image
+        -%}
+        {%- if collection_image -%}
+          <img
+            src="{{ collection_image | img_url: '120x' }}"
+            alt="{{ collection_image.alt }}"
+            width="120"
+            height="{{ 120 | divided_by: collection_image.preview_image.aspect_ratio }}"
+          >
+        {%- else -%}
+          {% render 'icon', icon: 'abc' %}
+        {%- endif -%}
+      </div>
+      <div class="quick-search__result-details ff-body fs-body-small">
+        <div class="quick-search__result-heading">{{ collection.title }}</div>
+      </div>
+    </a>
+  {%- endfor -%}
+
+  {%- for page in predictive_search.resources.pages -%}
+    {%- if forloop.index == 1 -%}
+      <div class="quick-search__header ff-heading fs-heading-3-base">{{ 'search.headings.pages' | t }}</div>
+    {%- endif -%}
+
+    <a class="quick-search__result" href="{{ page.url }}">
+      <div class="quick-search__result-image">
+        {% render 'icon', icon: 'abc' %}
+      </div>
+      <div class="quick-search__result-details ff-body fs-body-small">
+        <div class="quick-search__result-heading">{{ page.title }}</div>
+      </div>
+    </a>
+  {%- endfor -%}
+
+  {%- for article in predictive_search.resources.articles -%}
+    {%- if forloop.index == 1 -%}
+      <div class="quick-search__header ff-heading fs-heading-3-base">{{ 'search.headings.articles' | t }}</div>
+    {%- endif -%}
+
+    <a class="quick-search__result" href="{{ article.url }}">
+      <div class="quick-search__result-image">
+        {%- if article.image -%}
+          <img
+            src="{{ article.image | img_url: '120x' }}"
+            alt="{{ article.image.alt }}"
+            width="120"
+            height="{{ 120 | divided_by: article.image.preview_image.aspect_ratio }}"
+          >
+        {%- else -%}
+          {% render 'icon', icon: 'abc' %}
+        {%- endif -%}
+      </div>
+      <div class="quick-search__result-details ff-body fs-body-small">
+        <div class="quick-search__result-heading">{{ article.title }}</div>
+        <div class="quick-search__result-subheading">
+          {{- article.excerpt_or_content | strip_html | strip | truncate: 80 -}}
+        </div>
+      </div>
+    </a>
+  {%- endfor -%}
+
+  {%- if total_results == 0 -%}
+    {{ 'search.no_results' | t }}
+  {%- else -%}
+    <div class="quick-search__view-all ff-body fs-body-base">
+      <button type="submit">{{ 'search.view_all' | t }}</button>
+    </div>
+  {%- endif -%}
+{%- endif -%}

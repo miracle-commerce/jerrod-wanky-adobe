@@ -1,0 +1,54 @@
+<div
+  class="media borders-nfw"
+  data-media-id="{{ media.id }}"
+  data-media-type="{{ media.media_type }}"
+  {% if media.media_type == 'video' %}
+    data-loop="{{ loop_video }}"
+  {% endif %}
+  {% if media.media_type != 'image' %}
+    data-interactive
+  {% endif %}
+>
+  {%- if media.media_type == 'image' -%}
+    <a class="media__image" 
+      {% if link_to_product %}
+        href="{{product.url}}"
+        title="View product"
+      {% else %}
+        href="{{ media | img_url: '2000x' }}"
+        title="Open Image" 
+        target="_blank" 
+        rel="noopener"
+      {% endif %}
+        data-open="{{ media.id }}">
+      {% render 'nativeImage' with 
+        image: media, 
+        sizes: sizes, 
+        prioritizeLoading: prioritizeLoading 
+      %}
+    </a>
+
+  {%- elsif media.media_type == 'video' -%}
+    {{ media | video_tag: image_size: "1024x" }}
+
+  {%- elsif media.media_type == 'external_video' -%}
+    {%- liquid
+      if loop_video
+        assign loop_binary = "1"
+      else
+        assign loop_binary = "0"
+      endif
+    -%}
+
+    {{ media | external_video_url: playlist: media.external_id, loop: loop_binary | external_video_tag }}
+
+  {%- elsif media.media_type == 'model' -%}
+    {{ media | model_viewer_tag: reveal: 'interaction', toggleable: true }}
+    <button aria-label="{{ 'general.accessibility.load_3d_model' | t }}" class="model-poster" style="background-image: url({{ media | img_url: '1000x' }})">
+      <span class="media-badge model in-poster">
+        {% render 'icon' with icon: '3d-button-control' %}
+      </span>
+    </a>
+
+  {%- endif -%}
+</div>

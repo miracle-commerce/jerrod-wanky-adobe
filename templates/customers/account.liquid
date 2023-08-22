@@ -1,0 +1,87 @@
+<section class="account">
+  <div class="account__container">
+    <div class="account__header">
+      <h1 class="account__heading ff-heading fs-page-heading c-heading">{{ 'account.title' | t }}</h1>
+
+      <div class="fs-body-base">
+        {%- if customer.first_name != blank -%}
+          {{ 'account.welcome' | t: name: customer.first_name }}
+        {%- else -%}
+          {{ 'account.welcome_nameless' | t }}
+        {%- endif -%}
+        <a class="account__logout c-link td-u" href="{{ routes.account_logout_url }}">{{ 'account.log_out' | t }}</a>
+      </div>
+    </div>
+
+    <div class="account__sections ff-body fs-body-base">
+      <div class="account__top">
+        <h2 class="account__col-heading ff-meta fs-meta c-meta">{{ 'customer.account.details' | t }}</h2>
+        {{ customer.default_address | format_address }}
+        <p class="account__cta-wrap">
+          {%- if customer.addresses.size > 1 -%}
+            <a class="c-link td-u" href="{{ routes.account_addresses_url }}">
+              {{- 'account.view_addresses' | t }} ({{ customer.addresses_count }})</a
+            >
+          {%- else -%}
+            <a class="c-link td-u" href="{{ routes.account_addresses_url }}">{{ 'account.add_address' | t }}</a>
+          {%- endif -%}
+        </p>
+      </div>
+
+      <div class="account__main">
+        {% paginate customer.orders by 20 %}
+          {% if customer.orders.size != 0 %}
+            <div class="account__scrollable">
+              <table class="account__table account__table--expanded responsive-table">
+                <thead>
+                  <tr class="ff-meta fs-meta c-meta ta-l">
+                    <th scope="col">{{ 'customer.orders.order_number' | t }}</th>
+                    <th scope="col">{{ 'customer.orders.date' | t }}</th>
+                    <th scope="col">{{ 'customer.orders.payment_status' | t }}</th>
+                    <th scope="col">{{ 'customer.orders.fulfillment_status' | t }}</th>
+                    <th class="ta-r" scope="col">{{ 'customer.orders.total' | t }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for order in customer.orders %}
+                    <tr class="ta-l">
+                      <td data-label="{{ 'customer.orders.order_number' | t }}" scope="row">
+                        <a
+                          href="{{ order.customer_url }}"
+                          aria-label="{{ 'customer.orders.order_number_link' | t: number: order.name }}"
+                          class="c-link td-u"
+                        >
+                          {{ order.name }}
+                        </a>
+                      </td>
+                      <td data-label="{{ 'customer.orders.date' | t }}">
+                        {{ order.created_at | time_tag: format: 'date' }}
+                      </td>
+                      <td data-label="{{ 'customer.orders.payment_status' | t }}">
+                        {{ order.financial_status_label }}
+                      </td>
+                      <td data-label="{{ 'customer.orders.fulfillment_status' | t }}">
+                        {{ order.fulfillment_status_label }}
+                      </td>
+                      <td class="ta-r" data-label="{{ 'customer.orders.total' | t }}">
+                        {{ order.total_price | money }}
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          {% else %}
+            <h4 class="account__my-orders-heading ff-meta fs-meta c-meta">{{ 'account.orders.title' | t }}</h4>
+            <div class="account__no-orders">
+              <p>{{ 'account.orders.none' | t }}</p>
+            </div>
+          {% endif %}
+          {%- if paginate.pages > 1 -%}
+            {% render 'pagination', paginate: paginate %}
+          {%- endif -%}
+        {% endpaginate %}
+      </div>
+    </div>
+  </div>
+</section>

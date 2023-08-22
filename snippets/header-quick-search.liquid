@@ -1,0 +1,24 @@
+<div class="quick-search" data-quick-search>
+  <div class="quick-search__overlay" data-overlay></div>
+  <form action="{{ routes.search_url }}" class="quick-search__container" autocomplete="off">
+    <div class="quick-search__bar">
+      <input
+        class="quick-search__input"
+        type="text"
+        name="q"
+        placeholder="{{ 'search.placeholder' | t }}"
+        data-input
+      >
+      <input type="hidden" name="options[prefix]" value="last">
+      <div class="quick-search__actions">
+        <a class="quick-search__clear" href="#" data-clear tabindex="-1">
+          {% render 'icon' with icon: 'close' %}
+        </a>
+        <button class="quick-search__submit" type="submit">
+          {% render 'icon' with icon: 'search' %}
+        </button>
+      </div>
+    </div>
+    <div class="quick-search__results" data-results></div>
+  </form>
+</div>

@@ -1,0 +1,99 @@
+{%- liquid
+  assign type = block.type
+  assign settings = block.settings
+  assign type = type | replace: "_", "-"
+  assign position = settings.text_position | split: "_"
+  assign video_focal_alignment = settings.focal_point | replace: "_", " "
+  assign opacity = settings.overlay_opacity | divided_by: 100.0
+-%}
+
+{%- if settings.link != blank and settings.link_text == blank -%}
+  <a href="{{ settings.link }}" class="mosaic-grid__item mosaic-grid__item--{{ type }}"  aria-label="{{ 'general.accessibility.visit_link' | t: link: settings.link }}">
+{%- else -%}
+  <div class="mosaic-grid__item mosaic-grid__item--{{ type }}">
+{%- endif -%}
+
+  <div
+    class="
+      mosaic-grid__item-inner
+      mosaic-grid__item-inner--h-align-{{ position[0] }}
+      mosaic-grid__item-inner--v-align-{{ position[1] }}
+    "
+    style="
+      --video-focal-alignment: {{ video_focal_alignment }};
+      --video-fit: {{ settings.media_fit }};
+      --color-background: {{ settings.background_color }};
+    "
+    {{ block.shopify_attributes }}
+  >
+    {%- if settings.image != blank -%}
+      {% render 'responsive-image',
+        image: settings.image,
+        className: 'mosaic-grid__item-image',
+        focal_point: settings.focal_point,
+        object_fit: settings.media_fit,
+        max_width: 2000
+      %}
+    {%- endif -%}
+
+    {%- if settings.video_url != blank -%}
+      <video class="mosaic-grid__item-video image" autoplay playsinline loop muted src="{{ settings.video_url }}"></video>
+      {%- render 'video-pause' -%}
+    {% endif %}
+
+    {%- if settings.image == blank and settings.video_url == blank -%}
+      {%- if settings.background_color == blank or settings.background_color == 'rgba(0,0,0,0)' -%}
+        <div class="mosaic-grid__item-image placeholder-image">
+          {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+        </div>
+      {%- endif -%}
+    {%- endif -%}
+
+    {%- if settings.text != blank -%}
+      <video class="mosaic-grid__item-video image" autoplay playsinline loop muted src="{{ settings.video_url }}"></video>
+      {%- render 'video-pause' -%}
+    {% endif %}
+
+    <div
+      class="mosaic-grid__item-fill"
+      style="
+      --color-overlay-color: {{ settings.overlay_color }};
+      {%- if settings.color_overlay_gradient != blank -%}
+        --gradient-background: {{ settings.color_overlay_gradient }};
+      {%- endif -%}
+      --overlay-opacity: {{ opacity }};
+      "
+      >
+    </div>
+
+    <div class="mosaic__block-overlay">
+      {% render 'block-overlay' with
+        block: block,
+
+        meta: block.settings.meta,
+        heading: block.settings.title,
+        subheading: block.settings.subheading,
+
+        link: block.settings.link,
+        link_text: block.settings.link_text,
+
+        alignment: block.settings.text_position,
+        max_width_content: block.settings.text_max_width,
+
+        opacity: block.settings.opacity_overlay,
+        color_background: settings.color_overlay,
+        color_background_button: settings.color_background_button,
+        color_heading: settings.color_text,
+        color_subheading: settings.color_subheading,
+        color_text_button: settings.color_text_button
+      %}
+    </div>
+
+  </div>
+
+{%- if settings.link != blank and settings.link_text == blank -%}
+  </a>
+{%- else -%}
+  </div>
+{%- endif -%}
+

@@ -1,0 +1,60 @@
+{% form 'contact', class: 'contact__form' %}
+
+  {% if form.posted_successfully? %}
+    <p class="contact__success ff-body fs-body-base">
+      {{ 'contact.form.success' | t }}
+    </p>
+  {% endif %}
+
+  {{ form.errors | default_errors }}
+
+  <label for="ContactFormName" class="visually-hidden">{{ 'contact.form.name' | t }}</label>
+  <input
+    type="text"
+    name="contact[name]"
+    id="ContactFormName"
+    class="input"
+    placeholder="{{ 'contact.form.name' | t }}"
+    value="{% if form[name] %}{{ form[name] }}{% elsif customer %}{{ customer.name }}{% endif %}"
+  />
+
+  <label for="ContactFormEmail" class="visually-hidden">{{ 'contact.form.email' | t }}</label>
+  <input
+    type="email"
+    name="contact[email]"
+    id="ContactFormEmail"
+    class="input"
+    placeholder="{{ 'contact.form.email' | t }}"
+    value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}"
+    spellcheck="false"
+    autocomplete="off"
+    autocapitalize="off"
+  >
+  
+  <label for="ContactFormPhone" class="visually-hidden">{{ 'contact.form.phone' | t }}</label>
+  <input
+    type="tel"
+    name="contact[phone]"
+    id="ContactFormPhone"
+    class="input-reset input w-100"
+    placeholder="{{ 'contact.form.phone' | t }}"
+    value="{% if form[phone] %}{{ form.phone }}{% elsif customer %}{{ customer.phone }}{% endif %}"
+    pattern="[0-9\-]*"
+  >
+
+  <label for="ContactFormMessage" class="visually-hidden">{{ 'contact.form.message' | t }}</label>
+  <textarea
+    rows="10"
+    name="contact[body]"
+    id="ContactFormMessage"
+    class="input-reset input w-100"
+    placeholder="{{ 'contact.form.message' | t }}"
+  >
+    {%- if form.body -%}
+      {{- form.body -}}
+    {%- endif -%}
+  </textarea>
+
+  <button type="submit" class="btn btn--primary">{{ 'contact.form.submit' | t }}</button>
+
+{% endform %}

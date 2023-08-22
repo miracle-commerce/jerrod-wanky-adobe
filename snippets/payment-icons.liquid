@@ -1,0 +1,7 @@
+<div class="payment-icons">
+  {% for type in shop.enabled_payment_types %}
+    <div class="payment-icons__icon">
+      {{ type | payment_type_svg_tag: class: '' | replace: 'id=', 'data-id='  }}
+    </div>
+  {% endfor %}
+</div>

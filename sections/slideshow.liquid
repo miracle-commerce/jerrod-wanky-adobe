@@ -1,0 +1,396 @@
+{% liquid
+  assign slides = section.blocks
+  assign settings = section.settings
+%}
+
+<section
+  class="
+    slideshow
+    animation--slideshow
+    borders-nfw
+    {% if settings.enable_full_width %}full-width{% endif %}
+  "
+  data-section-id="{{ section.id }}"
+  data-section-type="slideshow"
+  data-autoplay="{{ settings.duration_autoplay | times: 1000 }}"
+  data-parallax="{{ settings.enable_parallax }}"
+  data-total-slides="{{ slides.size }}"
+  style="
+    --color-dot: {{ settings.color_dot }};
+    --desktop-height: {{ settings.desktop_height }}vh;
+    --mobile-height: {{ settings.mobile_height }}vh;
+  "
+>
+  <div class="slideshow__slides is-hidden" data-slider>
+    {%- if slides.size > 0 -%}
+      {%- for slide in slides -%}
+        {% comment %}
+          Blocks in the new theme architecture have a 'value' key representing
+          the default type of the block. If it exists use it, otherwise
+          fall back in the case of legacy architecture.
+        {% endcomment %}
+        {%- liquid
+          assign desktop_image = slide.settings.image
+          assign mobile_image = slide.settings.mobile_image
+          assign video = slide.settings.video_url
+          assign wrapper_has_link = slide.settings.link
+          assign wrapper_has_link_text = slide.settings.link_text
+        -%}
+
+        {%- capture tag -%}
+          {%- if wrapper_has_link != blank and wrapper_has_link_text == blank %}a{% else %}div{% endif %}
+        {%- endcapture -%}
+
+        {%- capture tag_attributes -%}
+          {% if wrapper_has_link != blank and wrapper_has_link_text == blank %}href="{{ slide.settings.link }}"{% endif %}
+        {%- endcapture -%}
+
+        <{{ tag }}
+          {{ tag_attributes }}
+          class="slideshow__cell{% if mobile_image != blank %} slideshow__cell--has-mobile-image{% endif %}"
+          data-slide
+          data-index="{{ forloop.index0 }}"
+          {{ slide.shopify_attributes }}
+        >
+          <div class="slideshow__asset">
+            {% if video != blank %}
+              <video
+                class="slideshow__video deferred-load"
+                preload="metadata"
+                playsinline
+                loop
+                muted
+                src="{{ video }}"
+              ></video>
+              {% render 'video-pause' %}
+            {% endif %}
+
+            {%- if desktop_image != blank -%}
+              {% render 'image',
+                image: desktop_image,
+                wrapper_class: 'slideshow__image-wrapper slideshow__parallax-wrapper slideshow__image--desktop',
+                disable_style: true,
+                focal_point: slide.settings.focal_point,
+                sizes: '(max-width: 640px) calc(100vw - 40px), calc(100vw - 80px)',
+                setLoadingAttribute: true,
+                prioritizeLoading: forloop.first
+              %}
+              {% comment %}ideally prioritizeLoading would be section-index aware but that isn't possible{% endcomment %}
+            {%- endif -%}
+
+            {%- if mobile_image != blank -%}
+              {% render 'image',
+                image: mobile_image,
+                wrapper_class: 'slideshow__image-wrapper slideshow__parallax-wrapper slideshow__image--mobile',
+                disable_style: true,
+                focal_point: slide.settings.focal_point_mobile,
+                sizes: '(max-width: 640px) calc(100vw - 40px), calc(100vw - 80px)',
+                setLoadingAttribute: true,
+                prioritizeLoading: forloop.first
+              %}
+            {%- endif -%}
+
+            {%- if desktop_image == blank and video == blank -%}
+              <div class="placeholder-image">
+                {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+              </div>
+            {%- endif -%}
+          </div>
+
+          <div class="slideshow__overlay">
+            {%
+              render 'block-overlay' with
+              block: slide,
+              meta: slide.settings.meta,
+              heading: slide.settings.title,
+              subheading: slide.settings.subheading,
+              link: slide.settings.link,
+              link_text: slide.settings.link_text,
+
+              alignment: slide.settings.alignment,
+              max_width_content: slide.settings.max_width_subheading,
+
+              opacity: slide.settings.opacity_overlay,
+              color_background: slide.settings.color_overlay,
+              color_background_button: slide.settings.color_background_button,
+              color_overlay_gradient: slide.settings.color_overlay_gradient,
+              color_heading: slide.settings.color_heading,
+              color_subheading: slide.settings.color_subheading,
+              color_text_button: slide.settings.color_text_button,
+              can_animate: true
+            %}
+          </div>
+        </{{ tag }}>
+      {%- endfor -%}
+    {%- endif -%}
+  </div>
+  {%- render 'navigation-dots' with dot_count: section.blocks.size -%}
+</section>
+
+{% schema %}
+{
+  "name": "t:sections.slideshow.name",
+  "class": "grid-section offset-section slideshow-section",
+  "disabled_on": {
+    "groups": ["header", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "type": "range",
+      "id": "desktop_height",
+      "label": "t:sections.slideshow.settings.height.label",
+      "unit": "%",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "mobile_height",
+      "label": "t:sections.slideshow.settings.mobile_height.label",
+      "unit": "%",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "duration_autoplay",
+      "label": "t:sections.slideshow.settings.duration_autoplay.label",
+      "unit": "s",
+      "min": 0,
+      "max": 10,
+      "step": 2,
+      "default": 4
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_parallax",
+      "label": "t:sections.slideshow.settings.enable_parallax.label",
+      "default": false
+    },
+    {
+      "id": "enable_full_width",
+      "type": "checkbox",
+      "label": "t:shared.enable_full_width.label",
+      "info": "t:shared.enable_full_width.info",
+      "default": false
+    },
+    {
+      "id": "color_dot",
+      "type": "color",
+      "label": "t:sections.slideshow.settings.color_dot.label",
+      "default": "#777777"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "image",
+      "name": "t:sections.slideshow.blocks.slide.name",
+      "limit": 5,
+      "settings": [
+        {
+          "id": "image",
+          "type": "image_picker",
+          "label": "t:sections.slideshow.blocks.slide.settings.desktop_image.label"
+        },
+        {
+          "id": "mobile_image",
+          "type": "image_picker",
+          "label": "t:sections.slideshow.blocks.slide.settings.mobile_image.label"
+        },
+        {
+          "id": "focal_point",
+          "type": "select",
+          "label": "t:shared.focal_point.label",
+          "options": [
+            { "label": "t:shared.focal_point.options.image_presentation", "value": "image_presentation" },
+            { "label": "t:shared.focal_point.options.left_top", "value": "left_top" },
+            { "label": "t:shared.focal_point.options.center_top", "value": "center_top" },
+            { "label": "t:shared.focal_point.options.right_top", "value": "right_top" },
+            { "label": "t:shared.focal_point.options.left_center", "value": "left_center" },
+            { "label": "t:shared.focal_point.options.center_center", "value": "center_center" },
+            { "label": "t:shared.focal_point.options.right_center", "value": "right_center" },
+            { "label": "t:shared.focal_point.options.left_bottom", "value": "left_bottom" },
+            { "label": "t:shared.focal_point.options.center_bottom", "value": "center_bottom" },
+            { "label": "t:shared.focal_point.options.right_bottom", "value": "right_bottom" }
+          ],
+          "default": "image_presentation"
+        },
+        {
+          "id": "focal_point_mobile",
+          "type": "select",
+          "label": "t:shared.focal_point.label_mobile",
+          "options": [
+            { "label": "t:shared.focal_point.options.image_presentation", "value": "image_presentation" },
+            { "label": "t:shared.focal_point.options.left_top", "value": "left_top" },
+            { "label": "t:shared.focal_point.options.center_top", "value": "center_top" },
+            { "label": "t:shared.focal_point.options.right_top", "value": "right_top" },
+            { "label": "t:shared.focal_point.options.left_center", "value": "left_center" },
+            { "label": "t:shared.focal_point.options.center_center", "value": "center_center" },
+            { "label": "t:shared.focal_point.options.right_center", "value": "right_center" },
+            { "label": "t:shared.focal_point.options.left_bottom", "value": "left_bottom" },
+            { "label": "t:shared.focal_point.options.center_bottom", "value": "center_bottom" },
+            { "label": "t:shared.focal_point.options.right_bottom", "value": "right_bottom" }
+          ],
+          "default": "image_presentation"
+        },
+        {
+          "type": "url",
+          "id": "video_url",
+          "label": "t:sections.slideshow.blocks.slide.settings.video_url.label",
+          "info": "t:sections.slideshow.blocks.slide.settings.video_url.info"
+        },
+        {
+          "id": "meta",
+          "type": "text",
+          "label": "t:sections.slideshow.blocks.slide.settings.meta.label"
+        },
+        {
+          "id": "title",
+          "type": "text",
+          "label": "t:sections.slideshow.blocks.slide.settings.title.label"
+        },
+        {
+          "id": "subheading",
+          "type": "richtext",
+          "label": "t:sections.slideshow.blocks.slide.settings.subheading.label"
+        },
+        {
+          "id": "max_width_subheading",
+          "type": "range",
+          "label": "t:sections.slideshow.blocks.slide.settings.max_width_subheading.label",
+          "min": 20,
+          "max": 50,
+          "step": 2,
+          "default": 30
+        },
+        {
+          "id": "link_text",
+          "type": "text",
+          "label": "t:sections.slideshow.blocks.slide.settings.link_text.label"
+        },
+        {
+          "id": "link",
+          "type": "url",
+          "label": "t:sections.slideshow.blocks.slide.settings.link.label"
+        },
+        {
+          "id": "alignment",
+          "type": "select",
+          "label": "t:sections.slideshow.blocks.slide.settings.alignment.label",
+          "options": [
+            { "label": "t:sections.slideshow.blocks.slide.settings.alignment.left_top.label", "value": "left_top" },
+            { "label": "t:sections.slideshow.blocks.slide.settings.alignment.center_top.label", "value": "center_top" },
+            { "label": "t:sections.slideshow.blocks.slide.settings.alignment.right_top.label", "value": "right_top" },
+            {
+              "label": "t:sections.slideshow.blocks.slide.settings.alignment.left_center.label",
+              "value": "left_center"
+            },
+            {
+              "label": "t:sections.slideshow.blocks.slide.settings.alignment.center_center.label",
+              "value": "center_center"
+            },
+            {
+              "label": "t:sections.slideshow.blocks.slide.settings.alignment.right_center.label",
+              "value": "right_center"
+            },
+            {
+              "label": "t:sections.slideshow.blocks.slide.settings.alignment.left_bottom.label",
+              "value": "left_bottom"
+            },
+            {
+              "label": "t:sections.slideshow.blocks.slide.settings.alignment.center_bottom.label",
+              "value": "center_bottom"
+            },
+            {
+              "label": "t:sections.slideshow.blocks.slide.settings.alignment.right_bottom.label",
+              "value": "right_bottom"
+            }
+          ],
+          "default": "left_center"
+        },
+        {
+          "type": "header",
+          "content": "t:sections.slideshow.blocks.slide.settings.color_settings_section_header.label"
+        },
+        {
+          "id": "color_heading",
+          "type": "color",
+          "label": "t:sections.slideshow.blocks.slide.settings.color_heading.label",
+          "default": "#ffffff"
+        },
+        {
+          "id": "color_subheading",
+          "type": "color",
+          "label": "t:sections.slideshow.blocks.slide.settings.color_subheading.label",
+          "default": "#b8b8b8"
+        },
+        {
+          "id": "color_text_button",
+          "type": "color",
+          "label": "t:sections.slideshow.blocks.slide.settings.color_text_button.label",
+          "default": "#ffffff"
+        },
+        {
+          "id": "color_background_button",
+          "type": "color",
+          "label": "t:sections.slideshow.blocks.slide.settings.color_background_button.label",
+          "default": "#000000"
+        },
+        {
+          "id": "color_overlay",
+          "type": "color",
+          "label": "t:sections.slideshow.blocks.slide.settings.color_overlay.label",
+          "default": "#000000"
+        },
+        {
+          "id": "color_overlay_gradient",
+          "type": "color_background",
+          "label": "t:shared.color.color_overlay_gradient.label"
+        },
+        {
+          "id": "opacity_overlay",
+          "type": "range",
+          "label": "t:sections.slideshow.blocks.slide.settings.opacity_overlay.label",
+          "min": 0,
+          "max": 100,
+          "step": 10,
+          "default": 60,
+          "unit": "%"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Slideshow",
+      "category": "Image",
+      "blocks": [
+        {
+          "type": "image",
+          "settings": {
+            "meta": "Slideshow",
+            "title": "This is your slideshow",
+            "subheading": "<p>Use it to make a dramatic first impression with high-quality imagery and minimal text. Using the button below to link to whatever is most appropriate.</p>",
+            "link": "#",
+            "link_text": "Shop now"
+          }
+        },
+        {
+          "type": "image",
+          "settings": {
+            "meta": "Slideshow",
+            "title": "This is your slideshow",
+            "subheading": "<p>Use it to make a dramatic first impression with high-quality imagery and minimal text. Using the button below to link to whatever is most appropriate.</p>",
+            "link": "#",
+            "link_text": "Shop now"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,91 @@
+{% liquid
+  assign heading = section.settings.heading
+  assign per_row = section.settings.per_row
+  assign rows = section.settings.rows
+  assign aspect_ratio = section.settings.aspect_ratio
+  assign max_products = per_row | times: rows
+%} 
+
+<section
+  class="recommended-products s-inline-section"
+  data-section-id="{{ section.id }}"
+  data-section-type="recommended-products"
+  data-product-id="{{ product.id }}"
+  data-limit="{{ max_products }}"
+>
+  {% render 'section-header', heading: heading %}
+
+  <div class="recommended-products__wrapper" data-recommendations> 
+    {%- if recommendations.products_count > 0 -%}
+      <div class="recommended-products__grid mobile-carousel" data-slider>
+
+        {%- for product in recommendations.products -%}
+          <div class="recommended-products__product recommended-products__product" data-items-per-row={{per_row}} data-slide>
+            
+            {% render 'product-item' with
+              product: product,
+              aspect_ratio: aspect_ratio
+            %}
+          </div>
+        {%- endfor -%}
+
+        {% render 'carousel-pagination' %}
+      </div>
+    {%- endif -%}
+  </div>
+
+</section>
+
+
+{% schema %}
+  {
+    "name": "t:sections.recommended_products.name",
+    "class": "inline-section",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "t:sections.recommended_products.settings.paragraph__customization.content"
+      },
+      {
+        "type": "paragraph",
+        "content": "t:sections.recommended_products.settings.paragraph__intro.content"
+      },
+      {
+        "id": "heading",
+        "type": "text",
+        "label": "t:sections.recommended_products.settings.heading.label",
+        "default": "Recommended"
+      },
+      {
+        "id": "per_row",
+        "type": "range",
+        "label": "t:sections.recommended_products.settings.per_row.label",
+        "min": 2,
+        "max": 4,
+        "step": 1,
+        "default": 3
+      },
+      {
+        "id": "rows",
+        "type": "range",
+        "label": "t:sections.recommended_products.settings.rows.label",
+        "min": 1,
+        "max": 3,
+        "step": 1,
+        "default": 1
+      },
+      {
+        "id": "aspect_ratio",
+        "type": "select",
+        "label": "t:shared.aspect_ratio.label",
+        "options": [
+          { "label": "t:shared.aspect_ratio.options.natural", "value": "natural" },
+          { "label": "t:shared.aspect_ratio.options.square", "value": "square" },
+          { "label": "t:shared.aspect_ratio.options.landscape", "value": "landscape" },
+          { "label": "t:shared.aspect_ratio.options.portrait", "value": "portrait" }
+        ],
+        "default": "natural"
+      }
+    ]
+  }
+{% endschema %}

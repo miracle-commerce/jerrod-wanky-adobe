@@ -1,0 +1,162 @@
+{% assign links = linklists[menu].links %}
+
+{%- assign account_visible = false -%}
+{%- if shop.customer_accounts_enabled -%}
+  {%- assign account_visible = true -%}
+{%- endif -%}
+
+{%- assign language_visible = false -%}
+{%- if shop.published_locales.size > 1 -%}
+  {%- assign language_visible = true -%}
+{%- endif -%}
+
+{%- assign currency_visible = false -%}
+{%- if localization.available_countries.size > 1 -%}
+  {%- assign currency_visible = true -%}
+{%- endif -%}
+
+<section
+  class="drawer-menu animation--drawer-menu"
+  data-drawer-menu
+>
+  <div class="drawer-menu__overlay" data-overlay></div>
+
+  <div class="drawer-menu__panel">
+    <form action="{{ routes.search_url }}" autocomplete="off">
+      <div class="drawer-menu__header">
+        <input
+          name="q"
+          class="input drawer-menu__search-input text-input-on-dark-background"
+          placeholder="{{ 'sections.drawer_menu.search_placeholder' | t }}"
+          data-input
+        >
+        <input type="hidden" name="options[prefix]" value="last">
+        <div class="drawer-menu__actions">
+          <button type="button" class="drawer-menu__clear ff-meta fs-meta" data-search-clear>
+            {% render 'icon' with icon: 'close' %}
+          </button>
+          <button type="submit" data-search-submit>{% render 'icon' with icon: 'search' %}</button>
+        </div>
+      </div>
+
+      <div class="drawer-menu__search-results" data-scroll-lock-ignore data-search-results></div>
+    </form>
+
+    <div class="drawer-menu__bottom">
+      <div class="drawer-menu__all-links" data-depth="0" data-all-links>
+        <div class="drawer-menu__contents" data-scroll-lock-ignore>
+          <div class="drawer-menu__main" data-main>
+            <ul class="drawer-menu__primary-links" data-primary-container="true" data-depth="0">
+              {% render 'drawer-menu-list', links: links %}
+            </ul>
+          </div>
+        </div>
+
+        {%- if account_visible or language_visible or currency_visible -%}
+          <ul class="drawer-menu__footer" data-footer data-scroll-lock-ignore>
+            {%- if account_visible -%}
+              <li class="drawer-menu__item animation--drawer-menu-item" data-list-item>
+                <a class="drawer-menu__link" href="{{ routes.account_url }}">
+                  {%- if customer -%}
+                    {{ 'sections.drawer_menu.account.logged_in' | t }}
+                  {% else %}
+                    {{ 'sections.drawer_menu.account.logged_out' | t }}
+                  {%- endif -%}
+                </a>
+              </li>
+            {%- endif -%}
+
+            {%- if language_visible or currency_visible -%}
+              {%- form 'localization', class: 'drawer-menu__form' -%}
+                {%- if language_visible -%}
+                  <li class="drawer-menu__item animation--drawer-menu-item" data-list-item>
+                    <a class="drawer-menu__link" href="#" data-item="secondary">
+                      {{ 'sections.drawer_menu.language' | t }}
+                      {% render 'icon' with icon: 'arrow-drop-down' %}
+                    </a>
+                    <ul class="drawer-menu__list drawer-menu__list--sub" aria-hidden="true" aria-expanded="false">
+                      <li class="drawer-menu__item drawer-menu__item--heading">
+                        <button class="drawer-menu__link" data-item="secondaryHeading">
+                          <span>{{ 'sections.drawer_menu.language' | t }}</span>
+                          {% render 'icon' with icon: 'arrow-drop-down' %}
+                        </button>
+                      </li>
+                      {% for locale in form.available_locales %}
+                        <li class="drawer-menu__item" data-list-item>
+                          <a
+                            class="drawer-menu__link drawer-menu__link--cb"
+                            href="#"
+                            data-item="locale"
+                            data-value="{{ locale.iso_code }}"
+                          >
+                            <div class="drawer-menu__radio">
+                              {% if locale.iso_code == form.current_locale.iso_code %}<div></div>{% endif %}
+                            </div>
+                            <span>{{ locale.endonym_name }}</span>
+                          </a>
+                        </li>
+                      {%- endfor -%}
+                    </ul>
+                  </li>
+                  <input
+                    type="hidden"
+                    name="locale_code"
+                    id="LocaleSelector"
+                    value="{{ form.current_locale.iso_code }}"
+                    data-locale-input
+                  >
+                {%- endif -%}
+
+                {%- if currency_visible -%}
+                  <li class="drawer-menu__item animation--drawer-menu-item" data-list-item>
+                    <a class="drawer-menu__link" href="#" data-item="secondary">
+                      {{ 'sections.drawer_menu.currency' | t }}
+                      {% render 'icon' with icon: 'arrow-drop-down' %}
+                    </a>
+                    <ul
+                      class="drawer-menu__list drawer-menu__list--sub drawer-menu__list--country-selector"
+                      aria-hidden="true"
+                      aria-expanded="false"
+                    >
+                      <li class="drawer-menu__item drawer-menu__item--heading">
+                        <button class="drawer-menu__link" data-item="secondaryHeading">
+                          <span>{{ 'sections.drawer_menu.currency' | t }}</span>
+                          {% render 'icon' with icon: 'arrow-drop-down' %}
+                        </button>
+                      </li>
+                      {% for country in localization.available_countries %}
+                        <li class="drawer-menu__item" data-list-item>
+                          <a
+                            class="drawer-menu__link drawer-menu__link--cb"
+                            href="#"
+                            data-item="currency"
+                            data-value="{{ country.iso_code }}"
+                          >
+                            <div class="drawer-menu__radio">
+                              {% if country.iso_code == localization.country.iso_code %}<div></div>{% endif %}
+                            </div>
+                            <span>
+                              {{- country.name }} ({{ country.currency.iso_code }}
+                              {{ country.currency.symbol }})</span
+                            >
+                          </a>
+                        </li>
+                      {%- endfor -%}
+                    </ul>
+                  </li>
+                  <input
+                    type="hidden"
+                    name="country_code"
+                    id="CurrencySelector"
+                    value="{{ localization.country.iso_code }}"
+                    data-currency-input
+                  >
+                {%- endif -%}
+              {%- endform -%}
+            {%- endif -%}
+          </ul>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</section>

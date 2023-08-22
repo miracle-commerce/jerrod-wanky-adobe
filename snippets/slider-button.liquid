@@ -1,0 +1,7 @@
+{%- if icon == blank -%}
+  {%- assign icon = 'arrow_forward' -%}
+{%- endif -%}
+
+<div class="slider-button">
+  {% render 'icon', icon: icon %}
+</div>

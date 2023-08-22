@@ -1,0 +1,89 @@
+{%- if paginated -%}
+  {%- if paginate.next != blank or paginate.previous != blank -%}
+    <div class="pagination">
+      <div class="pagination__arrows">
+        {% if paginate.previous != blank %}
+          <a
+            class="
+              pagination__touch
+              {% if paginate.previous == blank -%} disabled{%- endif %}
+              {% if disable_page_transitions -%} no-transition{%- endif %}
+            "
+            href="{{ paginate.previous.url }}"
+            title="{{ paginate.previous.title }}"
+            data-pagination="previous"
+          >
+            <div class="pagination__icon">
+              {% render 'icon-button' with icon: 'arrow_back' %}
+            </div>
+          </a>
+        {% else %}
+          <div class="pagination__touch disabled">
+            {% render 'icon-button' with icon: 'arrow_back' %}
+          </div>
+        {% endif %}
+
+        {% if paginate.next != blank %}
+          <a
+            class="
+              pagination__touch
+              {% if paginate.next == blank -%} disabled{%- endif %}
+              {% if disable_page_transitions -%} no-transition{%- endif %}
+            "
+            href="{{ paginate.next.url }}"
+            title="{{ paginate.next.title }}"
+            data-pagination="next"
+          >
+            <div class="pagination__icon">
+              {% render 'icon-button' with icon: 'arrow_forward' %}
+            </div>
+          </a>
+        {% else %}
+          <div class="pagination__touch disabled">
+            {% render 'icon-button' with icon: 'arrow_forward' %}
+          </div>
+        {% endif %}
+      </div>
+
+      <ul class="pagination__list fs-body-base">
+        {%- for part in paginate.parts -%}
+          {%- capture li_classes -%}
+            {%- if part.title == paginate.current_page -%}
+              pagination__item pagination__item--active
+            {%- elsif part.title == "&hellip;" -%}
+              pagination__ellip
+            {%- else -%}
+              pagination__item
+            {%- endif -%}
+          {%- endcapture -%}
+
+          <li class="{{ li_classes }}">
+            {%- if part.is_link == true -%}
+              <a
+                href="{{ part.url }}"
+                class="link{% if disable_page_transitions %} no-transition{% endif %}"
+                data-pagination="{{ part.title }}"
+              >
+                {{- part.title -}}
+              </a>
+            {%- else -%}
+              {%- if part.title == '&hellip;' -%}
+                <span>{{ part.title }}</span>
+              {%- else -%}
+                <span>{{ part.title }}</span>
+              {%- endif -%}
+            {%- endif -%}
+          </li>
+        {%- endfor -%}
+      </ul>
+    </div>
+  {%- endif -%}
+{%- else -%}
+  <div class="pagination-infinite-scroll" data-infinite-scroll-trigger>
+    {% if paginate.next %}
+      <a href="{{ paginate.next.url }}" class="btn no-transition">
+        {{- 'general.pagination.load_more' | t -}}
+      </a>
+    {% endif %}
+  </div>
+{%- endif -%}

@@ -1,0 +1,68 @@
+{% assign rendered_mega_navs = "" %}
+<ul class="header__links-list fs-body-base">
+  {% for link in menu %}
+
+    {%
+      liquid
+      assign has_meganav = false
+      if mega_navs.size > 0
+        for nav in mega_navs
+          assign trigger = nav.settings.dropdown_parent_link | handle | strip
+          unless has_meganav
+            if link.handle == trigger
+              assign has_meganav = true
+              assign meganav_block = nav              
+            endif
+          endunless
+        endfor
+      endif
+
+      if link.links.size > 0
+        assign has_children = true
+      endif
+
+      assign no_transition = false
+      if has_meganav or has_children
+        assign no_transition = true
+      endif
+    %}
+
+    <li {% if has_children %}data-submenu-parent{% endif %}>
+      <a
+        href="{{ link.url }}"
+        class="{% if no_transition %}no-transition{% endif %} {% if link.active %}active{% endif %}"
+        data-link
+        {% if has_meganav %}
+          data-mega="true"
+        {% elsif has_children %}
+          data-parent="true"
+          data-top-level-parent="true"
+        {% endif %}
+      >
+        {{ link.title }}
+
+        {%- if has_meganav or has_children -%}
+          <span class="header__links-icon">
+            {% render 'icon', with icon: 'arrow-drop-down' %}
+          </span>
+        {%- endif -%}
+      </a>
+
+      {%
+        liquid
+        if has_meganav
+          if meganav_block.type == "mega_nav_legacy"
+            render 'mega-nav-legacy' with link: link, nav: meganav_block
+          else
+            render 'mega-nav' with link: link, nav: meganav_block
+          endif
+        elsif has_children
+          render 'navigation-submenu' with menu: link.links, depth: 1
+        endif
+      %}
+    </li>
+
+    {%- assign has_children = false -%}
+  {% endfor %}
+</ul>
+

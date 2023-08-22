@@ -1,0 +1,23 @@
+<div class="share-block">
+  <a
+    class="share-block__icon"
+    href="//pinterest.com/pin/create/button/?url={{ shop.url | append: url }}&amp;media={{ image | img_url: '1024x1024' }}&amp;description={{ title | url_param_escape }}"
+    title="Share to Pinterest"
+  >
+    {% render 'icon' with icon: 'pinterest' %}
+  </a>
+  <a
+    class="share-block__icon"
+    href="//twitter.com/share?text={{ tile | url_param_escape }}&amp;url={{ shop.url | append: url }}"
+    title="Share to twitter"
+  >
+    {% render 'icon' with icon: 'twitter' %}
+  </a>
+  <a
+    class="share-block__icon"
+    href="//www.facebook.com/sharer.php?u={{ shop.url | append: url }}"
+    title="Share to Facebook"
+  >
+    {% render 'icon' with icon: 'facebook' %}
+  </a>
+</div>

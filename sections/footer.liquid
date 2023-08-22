@@ -1,0 +1,251 @@
+{% liquid
+  assign show_locale_selector = section.settings.show_locale_selector
+  assign show_currency_selector = section.settings.show_currency_selector
+  assign show_social_icons = section.settings.show_social_icons
+  assign show_payment_icons = section.settings.show_payment_icons
+  assign content = section.blocks
+
+  assign locale_selector = false
+  assign currency_selector = false
+  assign payment_icons = false
+
+  if show_locale_selector and shop.published_locales.size > 1
+    assign locale_selector = true
+  endif
+
+  if show_currency_selector and localization.available_countries.size > 1
+    assign currency_selector = true
+  endif
+
+  if show_payment_icons and shop.enabled_payment_types != empty
+    assign payment_icons = true
+  endif
+%}
+
+<footer
+  class="footer"
+  data-section-id="{{ section.id }}"
+  data-section-type="footer"
+>
+  <div class="footer__groups">
+    {% for block in content %}
+      <div class="footer__group">
+        <div class="footer__header" data-header>
+          <h5 class="footer__heading fs-body-base">{{ block.settings.title }}</h5>
+          <div class="footer__arrow">{% render 'icon', icon: 'arrow-drop-down' %}</div>
+        </div>
+        <div class="footer__group-content">
+          {%- if block.type == 'text' -%}
+            <div class="fs-body-base footer__text">{{ block.settings.text }}</div>
+
+          {%- elsif block.type == 'links' -%}
+            <div class="footer__links fs-body-base">
+              {% if linklists[block.settings.link_list].links.size > 0 %}
+                <ul>
+                  {% for link in linklists[block.settings.link_list].links %}
+                    <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+            </div>
+
+          {%- elsif block.type == 'newsletter' -%}
+            <div class="footer__newsletter">
+              <div class="fs-body-base footer__text">{{ block.settings.text }}</div>
+              {% render 'newsletter-form' with id: 'footer-subscribe' %}
+            </div>
+          {%- endif -%}
+        </div>
+      </div>
+    {% endfor %}
+
+    {%- if locale_selector or currency_selector -%}
+      <div class="footer__group footer__group--mobile">
+        <div class="footer__header" data-header>
+          <h5 class="footer__heading fs-body-base">
+            {%- if locale_selector and currency_selector -%}
+              {{ 'sections.footer.headings.cross_border' | t }}
+            {%- elsif locale_selector -%}
+              {{ 'sections.footer.headings.language' | t }}
+            {%- elsif currency_selector -%}
+              {{ 'sections.footer.headings.currency' | t }}
+            {%- endif -%}
+          </h5>
+          <div class="footer__arrow">{% render 'icon', icon: 'arrow-drop-down' %}</div>
+        </div>
+        <div class="footer__group-content">
+          {% render 'cross-border' with
+            show_locale: locale_selector,
+            show_currency: currency_selector,
+            id: 'mobile'
+          %}
+        </div>
+      </div>
+    {%- endif -%}
+
+    {%- if payment_icons -%}
+      <div class="footer__group footer__group--mobile">
+        <div class="footer__header" data-header>
+          <h5 class="footer__heading fs-body-base">{{ 'sections.footer.headings.payment' | t }}</h5>
+          <div class="footer__arrow">{% render 'icon', icon: 'arrow-drop-down' %}</div>
+        </div>
+        <div class="footer__group-content">
+          {% render 'payment-icons' %}
+        </div>
+      </div>
+    {%- endif -%}
+  </div>
+
+  {%- if content.size > 0 -%}
+    <hr class="footer__rule" />
+  {%- endif -%}
+
+  {%- if locale_selector or currency_selector or show_social_icons or payment_icons -%}
+    <div class="footer__bottom">
+      {%- if locale_selector or currency_selector or show_social_icons -%}
+        <div class="footer__bottom-left">
+          {% render 'cross-border' with
+            show_locale: locale_selector,
+            show_currency: currency_selector,
+            id: 'footer'
+          %}
+
+          {%- if show_social_icons -%}
+            {% render 'social-icons' %}
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+
+      <div class="footer__bottom-right">
+        {%- if payment_icons -%}
+          {% render 'payment-icons' %}
+        {%- endif -%}
+      </div>
+    </div>
+  {%- endif -%}
+
+  {%- if show_social_icons -%}
+    <div class="footer__mobile-social-icons">
+      {% render 'social-icons' %}
+    </div>
+  {%- endif -%}
+
+  <div class="footer__credits">
+    <p>{{ 'sections.footer.copyright' | t }} &copy; {{ 'now' | date: "%Y" }}, {{ shop.name | link_to: '/' }}.</p>
+    <p>{{ powered_by_link | replace: 'rel="nofollow"', 'rel="nofollow noopener"' }}</p>
+  </div>
+</footer>
+
+
+{% schema %}
+  {
+    "name": "Footer",
+    "class": "footer__parent",
+    "settings": [
+      {
+        "type": "header",
+        "content": "t:sections.footer.settings.header.content",
+        "info": "t:sections.footer.settings.header.info"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_locale_selector",
+        "label": "t:sections.footer.settings.show_locale_selector.label",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "t:sections.footer.settings.header_currency_selector.content",
+        "info": "t:sections.footer.settings.header_currency_selector.info"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_currency_selector",
+        "label": "t:sections.footer.settings.show_currency_selector.label",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "t:sections.footer.settings.header_social_media.content",
+        "info": "t:sections.footer.settings.header_social_media.info"
+      },
+      {
+        "id": "show_social_icons",
+        "type": "checkbox",
+        "label": "t:sections.footer.settings.show_social_icons.label",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "t:sections.footer.settings.header_payment_types.content",
+        "info": "t:sections.footer.settings.header_payment_types.content"
+      },
+      {
+        "id": "show_payment_icons",
+        "type": "checkbox",
+        "label": "t:sections.footer.settings.show_payment_icons.label",
+        "default": true
+      }
+    ],
+    "max_blocks": 3,
+    "blocks": [
+      {
+        "type": "text",
+        "name": "t:sections.footer.blocks.text.name",
+        "settings": [
+          {
+            "id": "title",
+            "type": "text",
+            "label": "t:sections.footer.blocks.text.settings.title.label",
+            "info": "t:sections.footer.blocks.text.settings.title.info",
+            "default": "About us"
+          },
+          {
+            "id": "text",
+            "type": "richtext",
+            "label": "t:sections.footer.blocks.text.settings.text.label",
+            "default": "<p>Use this text area to tell your customers about your brand and vision. You can change it in the theme settings.</p>"
+          }
+        ]
+      },
+      {
+        "type": "links",
+        "name": "t:sections.footer.blocks.links.name",
+        "settings": [
+          {
+            "id": "title",
+            "type": "text",
+            "label": "t:sections.footer.blocks.links.settings.title.label",
+            "info": "t:sections.footer.blocks.links.settings.title.info",
+            "default": "Links"
+          },
+          {
+            "id": "link_list",
+            "type": "link_list",
+            "label": "t:sections.footer.blocks.links.settings.link_list.label",
+            "default": "footer"
+          }
+        ]
+      },
+      {
+        "type": "newsletter",
+        "name": "t:sections.footer.blocks.newsletter.name",
+        "settings": [
+          {
+            "id": "title",
+            "type": "text",
+            "label": "t:sections.footer.blocks.newsletter.settings.title.label",
+            "info": "t:sections.footer.blocks.newsletter.settings.title.info",
+            "default": "Newsletter"
+          },
+          {
+            "id": "text",
+            "type": "richtext",
+            "label": "t:sections.footer.blocks.newsletter.settings.text.label",
+            "default": "<p>Subscribe for store updates and discounts.</p>"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

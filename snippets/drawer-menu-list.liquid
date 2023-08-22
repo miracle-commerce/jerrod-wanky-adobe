@@ -1,0 +1,45 @@
+{%- assign depth = 1 -%}
+
+{%- for link in links -%}
+  {%- assign has_children = false -%}
+  {%- if link.levels > 0 -%}
+    {%- assign has_children = true -%}
+  {%- endif -%}
+
+  <li class="drawer-menu__item animation--drawer-menu-item" data-list-item>
+    <a
+      data-item="{% if has_children %}parent{% else %}link{% endif %}"
+      class="drawer-menu__link {% if has_children %}no-transition{% endif %} {% if link.active %}active{% endif %}"
+      href="{{ link.url }}"
+      {% if depth > 1 %}
+        tabindex="-1"
+      {% endif %}
+      {% if has_children %}
+        data-link="primary"
+      {% endif %}
+    >
+      <span>{{ link.title }}</span>
+      {%- if has_children -%}
+        {% render 'icon' with icon: 'arrow-drop-down' %}
+      {%- endif -%}
+    </a>
+
+    {% comment %} Render sub navigation {% endcomment %}
+    {%- if link.links.size > 0 -%}
+      <ul
+        class="drawer-menu__list drawer-menu__list--sub"
+        data-height-reference
+        aria-hidden="true"
+        aria-expaned="false"
+      >
+        <li class="drawer-menu__item drawer-menu__item--heading animation--drawer-menu-item">
+          <button class="drawer-menu__link" data-heading="true" data-item="back">
+            <span>{{ link.title }}</span>
+            {% render 'icon' with icon: 'arrow-drop-down' %}
+          </button>
+        </li>
+        {% render 'drawer-menu-list', links: link.links %}
+      </ul>
+    {%- endif -%}
+  </li>
+{%- endfor -%}

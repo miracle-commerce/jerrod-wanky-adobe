@@ -1,0 +1,19 @@
+<div class="collection-top-bar__filters">
+  {% if show_filter %}
+    {% for filter in results.filters %}
+      <a href="#" class="pill pill--outline fs-body-base" data-mobile-filter="{{ filter.label | handleize}}">
+        {{ filter.label }}
+        {% render 'icon' with icon: 'arrow-drop-down' %}
+      </a>
+    {% endfor %}
+  {% endif %}
+
+  {% if show_sort %}
+    <a href="#" class="pill pill--outline fs-body-base" data-mobile-filter="__sort">
+      {{ 'collections.sorting.title' | t }}
+      {% render 'icon' with icon: 'arrow-drop-down' %}
+    </a>
+  {% endif %}
+
+  <div class="space"></div>
+</div>

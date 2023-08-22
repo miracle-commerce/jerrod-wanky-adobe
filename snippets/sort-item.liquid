@@ -1,0 +1,35 @@
+{%- if scope -%}
+  {%- assign scope = scope | prepend: '--' -%}
+{%- endif -%}
+{% capture filter_id %}filter--sort--{{ option.value | url_escape | escape }}{{ scope }}{% endcapture %}
+
+<li class="filter-item {% if active %}active{% endif %}">
+  <label
+    class="filter-item__content no-transition"
+    for="{{ filter_id }}"
+    {% if key != blank and val != blank %}
+      data-{{ key }}="{{ val | handle }}"
+    {% endif %}
+  >
+
+    <input
+      type="radio"
+      name="sort_by"
+      {% if active %}checked{% endif %}
+      value="{{ option.value }}"
+      data-value-escaped="{{ option.value | url_escape }}"
+      id="{{ filter_id }}"
+      class="filter-item__input filter-item__radio visually-hidden"
+      data-filter-item
+      data-filter-item-input
+    />
+    <div class="filter-input__input filter-item__radio">
+      <div class="indicator"></div>
+    </div>
+    
+    <span class="filter-item__label fs-body-base">
+      {{ label }}
+    </span>
+  </label>
+</li>
+

@@ -1,0 +1,61 @@
+{% assign file_extension = 'png' %}
+{%- if scope -%}
+  {%- assign scope = scope | prepend: '--' -%}
+{%- endif -%}
+{% capture filter_id %}filter--{{ filter_value.param_name | url_escape | escape }}--{{ filter_value.label | url_escape | escape }}{{ scope }}{% endcapture %}
+
+<li class="filter-item{% if type == 'swatch' or type == 'chip' %} inline{% endif %}">
+  <label
+    data-filter
+    class="filter-item__content {% if filter_value.count == 0 and filter_value.active == false %}filter-item__content--disabled{% endif %}"
+    for="{{filter_id}}"
+  >
+    <input
+      type="checkbox"
+      name="{{ filter_value.param_name }}"
+      data-value-escaped="{{ filter_value.value | url_escape }}"
+      value="{{ filter_value.value }}"
+      class="filter-item__input filter-item__checkbox visually-hidden"
+      id="{{filter_id}}"
+      data-group-name="{{group_name}}"
+      data-filter-item-input
+      {% if filter_value.active -%}checked{% endif %}
+      {%- if key != blank and val != blank -%}
+        data-{{ key }}="{{ val | handle }}"
+      {%- endif -%}
+      {%- if type == 'swatch' -%}
+        aria-label="{{ filter_value.label }}"
+      {%- endif -%}
+      {% if filter_value.count == 0 and filter_value.active == false %}disabled{% endif %}
+    />
+    {%- if type == 'checkbox' -%}
+      <div class="filter-input__input filter-item__checkbox">
+        {% render 'icon' with icon: 'check' %}
+      </div>
+    {%- endif -%}
+
+    {%- if type == 'checkbox' -%}
+      <span class="filter-item__label fs-body-base">
+        {{ filter_value.label }}
+      </span>
+      <span class="filter-item__count fs-body-base">{{ filter_value.count }}</span>
+    {%- endif -%}
+
+    {%- if type == 'swatch' -%}
+      <div
+        class="filter-item__swatch"
+        style="
+          background-image: url({{ filter_value.label | handle | append: '.' | append: file_extension | file_url }});
+          background-color: {{ filter_value.label | handle }};
+        "
+      >
+      </div>
+    {%- endif -%}
+
+    {%- if type == 'chip' -%}
+      <div class="filter-item__chip">
+        {{ filter_value.label }}
+      </div>
+    {%- endif -%}
+  </label>
+</li>

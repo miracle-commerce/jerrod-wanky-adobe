@@ -1,0 +1,235 @@
+{% liquid
+  assign slides = section.blocks
+  assign settings = section.settings
+
+  if slides.size < 3
+    assign slides = slides | concat: slides
+  endif
+%}
+
+<section
+  class="carousel"
+  data-section-id="{{ section.id }}"
+  data-section-type="carousel"
+  style="
+    --height-carousel: 600px;
+    --height-carousel-mobile: {{ settings.height_mobile }}vh;
+  "
+>
+  <div class="carousel__slides" data-js-slider>
+    {% for slide in slides %}
+      <div class="carousel__slide" data-js-slide data-index="{{ forloop.index0 }}" {{ slide.shopify_attributes }}>
+        <div class="carousel__slide-content {% if forloop.first %}carousel__slide-content--first{% endif %} borders">
+          {% if slide.settings.image != blank %}
+            {% render 'image',
+              image: slide.settings.image,
+              focal_point: 'image_presentation',
+              wrapper_class: 'carousel__image'
+            %}
+          {% else %}
+            <div class="placeholder-image">
+              {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+            </div>
+          {% endif %}
+
+          {%
+            render 'block-overlay' with
+            block: slide,
+
+            meta: slide.settings.meta,
+            heading: slide.settings.title,
+            subheading: slide.settings.subheading,
+            link: slide.settings.link,
+            link_text: slide.settings.link_text,
+
+            alignment: slide.settings.alignment,
+            max_width_content: slide.settings.max_width_subheading,
+
+            opacity: slide.settings.opacity_overlay,
+            color_background: settings.color_overlay,
+            color_background_button: settings.color_background_button,
+            color_overlay_gradient: settings.color_overlay_gradient,
+            color_heading: settings.color_heading,
+            color_subheading: settings.color_subheading,
+            color_text_button: settings.color_text_button
+          %}
+        </div>
+      </div>
+    {% else %}
+      {% for i in (1..4) %}
+        <div class="carousel__slide" data-js-slide data-index="{{ forloop.index0 }}" {{ slide.shopify_attributes }}>
+          <div class="carousel__slide-content carousel__slide-content--placeholder {% if forloop.first %}carousel__slide-content--first{% endif %} borders">
+            <div class="placeholder-image">
+              {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    {% endfor %}
+
+    {% render 'carousel-pagination' %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "t:sections.carousel.name",
+  "class": "carousel-section",
+  "disabled_on": {
+    "groups": ["header", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "id": "height_mobile",
+      "type": "range",
+      "label": "t:sections.carousel.settings.height_mobile.label",
+      "info": "t:sections.carousel.settings.height_mobile.info",
+      "min": 20,
+      "max": 100,
+      "step": 10,
+      "default": 80,
+      "unit": "%"
+    },
+    {
+      "id": "color_overlay",
+      "type": "color",
+      "label": "t:sections.carousel.settings.color_overlay.label",
+      "default": "#000000"
+    },
+    {
+      "id": "color_overlay_gradient",
+      "type": "color_background",
+      "label": "t:shared.color.color_overlay_gradient.label"
+    },
+    {
+      "id": "color_heading",
+      "type": "color",
+      "label": "t:sections.carousel.settings.color_heading.label",
+      "default": "#ffffff"
+    },
+    {
+      "id": "color_subheading",
+      "type": "color",
+      "label": "t:sections.carousel.settings.color_subheading.label",
+      "default": "#b8b8b8"
+    },
+    {
+      "id": "color_background_button",
+      "type": "color",
+      "label": "t:sections.carousel.settings.color_background_button.label",
+      "default": "#000000"
+    },
+    {
+      "id": "color_text_button",
+      "type": "color",
+      "label": "t:sections.carousel.settings.color_text_button.label",
+      "default": "#ffffff"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "image",
+      "name": "t:sections.carousel.blocks.name",
+      "settings": [
+        {
+          "id": "image",
+          "type": "image_picker",
+          "label": "t:sections.carousel.blocks.settings.image.label"
+        },
+        {
+          "id": "meta",
+          "type": "text",
+          "label": "t:sections.carousel.blocks.settings.meta.label",
+          "default": "Carousel"
+        },
+        {
+          "id": "title",
+          "type": "text",
+          "label": "t:sections.carousel.blocks.settings.title.label",
+          "default": "Carousel Section"
+        },
+        {
+          "id": "subheading",
+          "type": "richtext",
+          "label": "t:sections.carousel.blocks.settings.subheading.label",
+          "default": "<p>Use this Section to showcase a rotating gallery of images.</p>"
+        },
+        {
+          "id": "max_width_subheading",
+          "type": "range",
+          "label": "t:sections.carousel.blocks.settings.max_width_subheading.label",
+          "min": 18,
+          "max": 50,
+          "step": 2,
+          "default": 28
+        },
+        {
+          "id": "link_text",
+          "type": "text",
+          "label": "t:sections.carousel.blocks.settings.link_text.label",
+          "default": "Shop the Collection"
+        },
+        {
+          "id": "link",
+          "type": "url",
+          "label": "t:sections.carousel.blocks.settings.link.label",
+          "default": "/"
+        },
+        {
+          "id": "alignment",
+          "type": "select",
+          "label": "t:sections.carousel.blocks.settings.alignment.label",
+          "options": [
+            { "label": "t:sections.carousel.blocks.settings.alignment.options.left_top", "value": "left_top" },
+            { "label": "t:sections.carousel.blocks.settings.alignment.options.center_top", "value": "center_top" },
+            { "label": "t:sections.carousel.blocks.settings.alignment.options.right_top", "value": "right_top" },
+            { "label": "t:sections.carousel.blocks.settings.alignment.options.left_center", "value": "left_center" },
+            {
+              "label": "t:sections.carousel.blocks.settings.alignment.options.center_center",
+              "value": "center_center"
+            },
+            { "label": "t:sections.carousel.blocks.settings.alignment.options.right_center", "value": "right_center" },
+            { "label": "t:sections.carousel.blocks.settings.alignment.options.left_bottom", "value": "left_bottom" },
+            {
+              "label": "t:sections.carousel.blocks.settings.alignment.options.center_bottom",
+              "value": "center_bottom"
+            },
+            { "label": "t:sections.carousel.blocks.settings.alignment.options.right_bottom", "value": "right_bottom" },
+            { "label": "t:sections.carousel.blocks.settings.alignment.options.left_split", "value": "left_split" },
+            { "label": "t:sections.carousel.blocks.settings.alignment.options.center_split", "value": "center_split" },
+            { "label": "t:sections.carousel.blocks.settings.alignment.options.right_split", "value": "right_split" }
+          ],
+          "default": "left_split"
+        },
+        {
+          "id": "opacity_overlay",
+          "type": "range",
+          "label": "t:sections.carousel.blocks.settings.opacity_overlay.label",
+          "min": 0,
+          "max": 100,
+          "step": 10,
+          "default": 60,
+          "unit": "%"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Carousel",
+      "category": "Image",
+      "blocks": [
+        {
+          "type": "image"
+        },
+        {
+          "type": "image"
+        },
+        {
+          "type": "image"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

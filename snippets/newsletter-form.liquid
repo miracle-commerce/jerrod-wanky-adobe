@@ -1,0 +1,25 @@
+<div class="newsletter-form">
+  {% form 'customer', id: id %}
+    {{ form.errors | default_errors }}
+    {% if form.posted_successfully? %}
+      <p class="ff-body fs-body-base">{{ 'general.newsletter_form.confirmation' | t }}</p>
+    {% else %}
+      <input type="hidden" name="contact[tags]" value="newsletter">
+      <div class="newsletter__input-container">
+        <label for="newsletterForm-{{id}}-emailInput" class="visually-hidden">{{ 'general.newsletter_form.email_placeholder' | t }}</label>
+        <input
+          id="newsletterForm-{{id}}-emailInput"
+          type="email"
+          class="input input--round text-input-on-dark-background"
+          name="contact[email]"
+          value="{% if customer.email != blank %}{{ customer.email }}{% endif %}"
+          placeholder="{{ 'general.newsletter_form.email_placeholder' | t }}"
+          autocorrect="off"
+          autocapitalize="off">
+          <button type="submit" name="commit" id="Subscribe" class="newsletter-button" aria-label="{{ 'general.newsletter_form.submit' | t }}">
+            {%- render 'icon' with icon: 'arrow_forward' -%}
+          </button>
+      </div>
+    {% endif %}
+  {% endform %}
+</div>

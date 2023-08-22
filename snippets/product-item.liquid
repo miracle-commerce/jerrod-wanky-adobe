@@ -1,0 +1,130 @@
+{%- liquid
+  if product.media.size > 1
+    assign multiple_images = true
+  endif
+
+  assign current_variant = product.selected_or_first_available_variant
+
+  if aspect_ratio == blank
+    assign aspect_ratio = 'natural'
+  endif
+  assign disabled_image_style = false
+  if aspect_ratio != 'natural'
+    assign disabled_image_style = true
+  endif
+-%}
+
+<div class="product-item product-item--{{ aspect_ratio }}">
+  {%- if product == blank -%}
+    <div class="placeholder-image">
+      {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+    </div>
+  {%- else -%}
+    <div class="product-item__media">
+      <a class="product-item__image-link borders" href="{{ product.url }}"
+        {%- if product -%}
+          title="{{ product.title }}"
+        {%- else -%}
+          title="{{ 'sections.featured_products.placeholder.product_title' | t }}"
+        {%- endif -%}
+      >
+        {%- if multiple_images -%}
+          {% if product.featured_media %}
+            {% render 'image' with
+              id: product.featured_media.id,
+              image: product.featured_media,
+              wrapper_class: 'product-item__image',
+              disable_style: disabled_image_style
+            %}
+          {% else %}
+            {% render 'image' with
+              id: product.media[0].id,
+              image: product.media[0].preview_image,
+              wrapper_class: 'product-item__image',
+              disable_style: disabled_image_style
+            %}
+          {% endif %}
+          {%- if settings.show_secondary_image_on_hover -%}
+            {% render 'image' with
+              image: product.media[1].preview_image,
+              wrapper_class: 'product-item__image product-item__image--two',
+              disable_style: true
+            %}
+          {%- endif -%}
+        {%- else -%}
+          {% if product.featured_media %}
+            {% render 'image' with
+              id: product.featured_media.id,
+              image: product.featured_media,
+              wrapper_class: 'product-item__image',
+              disable_style: disabled_image_style
+            %}
+          {% else %}
+            <div class="placeholder-image">
+              {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+            </div>
+          {% endif %}
+        {%- endif -%}
+      </a>
+      {% if product.available and settings.cart_enable_quick_shop %}
+        <div class="product-item__add">
+          <button class="btn btn--primary btn--full" data-quick-add="{{ product.handle }}">{{ 'product.quick_add' | t }}</button>
+        </div>
+      {% endif %}
+    </div>
+  {%- endif -%}
+
+  <div class="product-item__meta fs-body-base c-body">
+    <div class="product-item__text ff-body">
+      {%- if product and product != blank -%}
+        <h4><a href="{{ product.url }}">{{ product.title }}</a></h4>
+      {%- else -%}
+        <h4><a href="/" >{{ 'sections.featured_products.placeholder.product_title' | t }}</a></h4>
+      {%- endif -%}
+
+      {% if product != blank %}
+        {% if product.compare_at_price > product.price %}
+          <span class="visually-hidden">{{ 'products.product.regular_price' | t }}</span>
+          <s class="t-subdued">{{ product.compare_at_price | money }}{% if settings.currency_code_enabled %} {{ cart.currency.iso_code }}{% endif %}</s>
+
+          {% if product.price_varies %}
+            {%- assign sale_price = product.price | money -%}
+            {{ 'products.product.on_sale_from_html' | t: price: sale_price }}{% if settings.currency_code_enabled %} {{ cart.currency.iso_code }}{% endif %}
+          {% else %}
+            <span class="sale">{{ product.price | money }}{% if settings.currency_code_enabled %} {{ cart.currency.iso_code }}{% endif %}<span>
+          {% endif %}
+          {% render 'unit-price' item: current_variant %}
+
+        {% else %}
+          {% if product.price_varies %}
+            {%- assign price = product.price | money -%}
+            {{ 'products.product.from_lowest_price_html' | t: lowest_price: price }}{% if settings.currency_code_enabled %} {{ cart.currency.iso_code }}{% endif %}
+          {% else %}
+            {{ product.price | money }}{% if settings.currency_code_enabled %} {{ cart.currency.iso_code }}{% endif %}
+          {% endif %}
+
+        {% endif %}
+      {% else %}
+        {{ 9999 | money }}{% if settings.currency_code_enabled %} {{ cart.currency.iso_code }}{% endif %}
+      {% endif %}
+
+    </div>
+
+    {%- if product.compare_at_price > product.price or product.available != true -%}
+      <div class="product-item__badges">
+        {% if product.compare_at_price > product.price %}
+          <div class="product-item__badge product-item__badge--sale">
+            {{ 'products.product.on_sale' | t }}
+          </div>
+        {% endif %}
+
+        {% unless product.available or placeholder %}
+          <div class="product-item__badge product-item__badge--sold-out">
+            {{ 'products.product.sold_out' | t }}
+          </div>
+        {% endunless %}
+      </div>
+    {%- endif -%}
+
+  </div>
+</div>

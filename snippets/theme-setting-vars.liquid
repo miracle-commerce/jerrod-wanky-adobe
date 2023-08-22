@@ -1,0 +1,218 @@
+{% liquid
+  assign font_logo = settings.font_logo
+  assign font_heading = settings.font_heading
+  assign font_body = settings.font_body
+  assign font_meta = settings.font_meta
+
+  assign font_body_bold = settings.font_body | font_modify: 'weight', '+100'
+  assign font_body_bolder = font_body_bold | font_modify: 'weight', '+100'
+  assign font_body_italic = settings.font_body | font_modify: 'style', 'italic'
+  assign font_body_bold_italic = settings.font_body | font_modify: 'weight', '+100' | font_modify: 'style', 'italic'
+
+  assign logo_text_transform = 'none'
+  if settings.capitalize_logo
+    assign logo_text_transform = 'uppercase'
+  endif
+
+  assign heading_text_transform = 'none'
+  if settings.capitalize_headings
+    assign heading_text_transform = 'uppercase'
+  endif
+
+  assign logo_text_transform = 'none'
+  if settings.capitalize_logo
+    assign logo_text_transform = 'uppercase'
+  endif
+
+  assign meta_text_transform = 'none'
+  if settings.capitalize_meta
+    assign meta_text_transform = 'uppercase'
+  endif
+
+
+  assign opacity_mini_heading = 0.7
+
+  assign brightness_primary_button = settings.color_background_button | color_brightness
+  if brightness_primary_button > 60
+    assign color_background_button_hover = settings.color_background_button | color_darken: 20
+  else
+    assign color_background_button_hover = settings.color_background_button | color_lighten: 20
+  endif
+
+  assign brightness_contrast_button = settings.color_background_button_contrast | color_brightness
+  if brightness_contrast_button > 60
+    assign color_background_button_hover_contrast = settings.color_background_button_contrast | color_darken: 20
+  else
+    assign color_background_button_hover_contrast = settings.color_background_button_contrast | color_lighten: 20
+  endif
+
+
+  assign brightness_background = settings.color_background_body | color_brightness
+  if brightness_background > 127
+    assign color_background_meta = settings.color_background_body | color_darken: 4
+  else
+    assign color_background_meta = settings.color_background_body | color_lighten: 4
+  endif
+
+  assign brightness_contrast_background = settings.color_background_contrast | color_brightness
+  if brightness_contrast_background > 127
+    assign color_background_meta_contrast = settings.color_background_contrast | color_darken: 4
+  else
+    assign color_background_meta_contrast = settings.color_background_contrast | color_lighten: 4
+  endif
+
+  assign brightness_background_footer = settings.color_background_footer | color_brightness
+  if brightness_background_footer > 127
+    assign color_background_button_hover_footer = settings.color_background_footer | color_darken: 10
+  else
+    assign color_background_button_hover_footer = settings.color_background_footer | color_lighten: 10
+  endif
+%}
+
+
+<style>
+  {{ font_logo | font_face: font_display: 'swap' }}
+  {{ font_heading | font_face: font_display: 'swap' }}
+  {{ font_meta | font_face: font_display: 'swap' }}
+  {{ font_body | font_face: font_display: 'swap' }}
+  {{ font_body_bold | font_face: font_display: 'swap' }}
+  {{ font_body_italic | font_face: font_display: 'swap' }}
+  {{ font_body_boldy_italic | font_face: font_display: 'swap' }}
+
+  :root {
+    --color-text-heading: {{ settings.color_text_heading }};
+    --color-text-subheading: {{ settings.color_text_heading | color_modify: 'alpha', 0.7 }};
+    --color-text-body: {{ settings.color_text_body }};
+    --color-text-body-transparent: {{ settings.color_text_body | color_modify: 'alpha', 0.05 }};
+    --color-text-body-transparent-02: {{ settings.color_text_body | color_modify: 'alpha', 0.2 }};
+    --color-text-meta: {{ settings.color_text_heading | color_modify: 'alpha', opacity_mini_heading }};
+    --color-text-link: {{ settings.color_text_link }};
+    --color-text-success: #39bb4a;
+    --color-text-error: #b6534c;
+
+    --color-background: {{ settings.color_background_body }};
+    --color-background-transparent: {{ settings.color_background_body | color_modify: 'alpha', 0.8 }};
+    --color-border: {{ settings.color_border }};
+    --color-overlay: {{ settings.color_overlay }};
+    --color-overlay-transparent: {{ settings.color_overlay | color_modify: 'alpha', 0.6 }};
+
+    --color-background-meta: {{ color_background_meta }};
+    --color-foreground-meta: {{ settings.color_text_body | color_modify: 'alpha', 0.6 }};
+
+    --color-border-input: {{ settings.color_border }};
+    --color-text-input: {{ settings.color_text_body }};
+
+    --color-background-button: {{ settings.color_background_button }};
+    --color-background-button-hover: {{ color_background_button_hover }};
+    --color-text-button: {{ settings.color_text_button }};
+
+    --color-border-button-secondary: {{ settings.color_border }};
+    --color-text-button-secondary: {{ settings.color_text_body }};
+    --color-border-button-secondary-hover: {{ settings.color_background_button }};
+
+    --color-background-contrast: {{ settings.color_background_contrast }};
+    --color-background-meta-contrast: {{ color_background_meta_contrast }};
+    --color-foreground-meta-contrast: {{ settings.color_text_body_contrast | color_modify: 'alpha', 0.6 }};
+    --color-text-meta-contrast: {{ settings.color_text_heading_contrast | color_modify: 'alpha', opacity_mini_heading }};
+    --color-text-heading-contrast: {{ settings.color_text_heading_contrast }};
+    --color-text-subheading-contrast: {{ settings.color_text_heading_contrast | color_modify: 'alpha', 0.7 }};
+    --color-text-body-contrast: {{ settings.color_text_body_contrast }};
+    --color-border-contrast: {{ settings.color_border_contrast }};
+    --color-background-button-contrast: {{ settings.color_background_button_contrast }};
+    --color-background-button-hover-contrast: {{ color_background_button_hover_contrast }};
+    --color-text-button-contrast: {{ settings.color_text_button_contrast }};
+    --color-text-link-contrast: {{ settings.color_text_link_contrast }};
+
+    --color-background-header: {{ settings.color_header_bg }};
+    --color-background-header-transparent: {{ settings.color_header_bg | color_modify: 'alpha', 0 }};
+    --color-text-header: {{ settings.color_header_text }};
+    --color-icon-header: {{ settings.color_header_text }};
+    --color-border-header: {{ settings.color_border_header }};
+    --color-shadow-header: rgba(0, 0, 0, 0.15);
+
+    --color-background-dropdown: {{ settings.color_background_drawer }};
+    --color-text-dropdown: {{ settings.color_text_drawer }};
+    --color-text-dropdown-transparent: {{ settings.color_text_drawer | color_modify: 'alpha', 0.1 }};
+    --color-border-dropdown: {{ settings.color_border_drawer }};
+
+    --color-background-footer: {{ settings.color_background_footer }};
+    --color-text-footer: {{ settings.color_text_footer }};
+    --color-border-footer: {{ settings.color_border_footer }};
+    --color-border-footer-darker: {{ settings.color_border_footer | color_darken: 20 }};
+    --color-input-button-hover-footer: {{ color_background_button_hover_footer }};
+
+    --color-text-drawer: {{ settings.color_text_drawer }};
+    --color-text-meta-drawer: {{ settings.color_text_drawer | color_modify: 'alpha', opacity_mini_heading }};
+    --color-background-drawer: {{ settings.color_background_drawer }};
+    --color-border-drawer: {{ settings.color_border_drawer }};
+    --color-background-input-drawer: {{ settings.color_background_input_drawer }};
+    --color-text-input-drawer: {{ settings.color_text_input_drawer }};
+
+    --color-background-pill: {{ settings.color_border | color_modify: 'alpha', 0.70 }};
+    --color-background-pill-hover: {{ settings.color_border }};
+
+    /* Typography */
+    --font-logo: {{ font_logo.family }}, {{ font_logo.fallback_families }};
+    --font-logo-weight: {{ font_logo.weight }};
+    --font-logo-style: {{ font_logo.style }};
+    --logo-font-size: {{ settings.logo_base_size }}px;
+    --logo-text-transform: {{ logo_text_transform }};
+    --logo-letter-spacing: {{ settings.logo_letter_spacing | times: 0.001 | append: 'em' }};
+
+    --font-heading: {{ settings.font_heading.family }}, {{ settings.font_heading.fallback_families }};
+    --font-heading-weight: {{ settings.font_heading.weight }};
+    --font-heading-style: {{ settings.font_heading.style }};
+    --font-heading-text-transform: {{ heading_text_transform }};
+    --font-heading-base-letter-spacing: {{ settings.heading_letter_spacing | times: 0.001 | append: 'em' }};
+
+    --font-body: {{ settings.font_body.family }}, {{ settings.font_body.fallback_families }};
+    --font-body-weight: {{ settings.font_body.weight }};
+    --font-body-style: {{ settings.font_body.style }};
+    --font-body-bold-weight: {{ font_body_bold.weight | default: 'bold' }};
+    --font-body-bolder-weight: {{ font_body_bolder.weight | default: 'bold' }};
+    --font-body-base-letter-spacing: {{ settings.body_letter_spacing | times: 0.001 | append: 'em' }};
+
+    --font-meta: {{ settings.font_meta.family }}, {{ settings.font_meta.fallback_families }};
+    --font-meta-weight: {{ settings.font_meta.weight }};
+    --font-meta-style: {{ settings.font_meta.style }};
+    --font-meta-text-transform: {{ meta_text_transform }};
+    --font-meta-base-letter-spacing: {{ settings.meta_letter_spacing | times: 0.001 | append: 'em' }};
+
+    /* --font-size-heading-x-large: 36px; */
+    --font-size-heading-x-large: {{ settings.heading_base_size | times: 1.5 | round | append: 'px' }};
+    --line-height-heading-x-large: 1.22;
+
+    /* --font-size-heading-large: 32px; */
+    --font-size-heading-large: {{ settings.heading_base_size | times: 1.333 | round | append: 'px' }};
+    --line-height-heading-large: 1.25;
+
+    /* --font-size-heading-base: 24px; */
+    --font-size-heading-base: {{ settings.heading_base_size | append: 'px' }};
+    --line-height-heading-base: 1.33;
+
+    /* --font-size-heading-small: 18px; */
+    --font-size-heading-small: {{ settings.heading_base_size | times: 0.75 | round | append: 'px' }};
+    --line-height-heading-small: 1.33;
+
+    /* --font-size-body-large: 16px; */
+    --font-size-body-large: {{ settings.body_base_size | times: 1.14 | round | append: 'px' }};
+    --line-height-body-large: 1.75;
+
+    /* --font-size-body-base: 14px; */
+    --font-size-body-base: {{ settings.body_base_size | append: 'px' }};
+    --line-height-body-base: 1.714;
+
+    --font-size-body-small: 12px;
+    --font-size-body-small: {{ settings.body_base_size | times: 0.85 | round | append: 'px' }};
+    --line-height-body-small: 1.66;
+
+    /* --font-size-meta: 12px; */
+    --font-size-meta: {{ settings.meta_base_size | append: 'px' }};
+    --line-height-meta: 2;
+
+    --radius-corner: {{ settings.corner_radius }}px;
+
+    /* Shopify pay specific */
+    --payment-terms-background-color: {{ color_background_meta }};
+  }
+</style>

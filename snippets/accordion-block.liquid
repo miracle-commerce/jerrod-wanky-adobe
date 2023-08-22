@@ -1,0 +1,14 @@
+<div class="accordion rte {{ classes }}">
+  <div
+    class="accordion__group"
+    data-index="{{ forloop.index0 }}"
+    {{ block.shopify_attributes }}
+  >
+    <a class="accordion__label" href="#">
+      {{ heading }}
+    </a>
+    <div class="accordion__text{% if small_text %} fs-body-small{% endif %}">
+      {{ content }}
+    </div>
+  </div>
+</div>

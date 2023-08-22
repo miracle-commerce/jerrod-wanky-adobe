@@ -1,0 +1,218 @@
+{%- assign main_image = section.settings.image -%}
+{%- assign image_position = section.settings.image_position -%}
+{%- assign heading = section.settings.title -%}
+{%- assign subheading = section.settings.subheading -%}
+{%- assign link = section.settings.link -%}
+{%- assign link_text = section.settings.link_text -%}
+{%- assign contrast = section.settings.enable_contrast -%}
+{%- assign full_width = section.settings.enable_full_width -%}
+{%- assign blocks = section.blocks -%}
+
+{%- assign product_title = 'sections.featured_products.placeholder.product_title' | t -%}
+
+<section
+  class="
+    featured-products
+    featured-products--{{ image_position }}
+    borders-nfw
+    {% if contrast %}contrast{% endif %}
+    {% if full_width %}full-width{% endif %}
+  "
+  data-section-id="{{ section.id }}"
+  data-section-type="featured-products"
+>
+  <div class="featured-products__image">
+    {%- if main_image != blank -%}
+      {% render 'flexible-image' with image: main_image %}
+    {%- else -%}
+      <div class="placeholder-image">
+        {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+      </div>
+    {%- endif -%}
+  </div>
+
+  <div class="featured-products__content">
+    {%- if heading != blank -%}
+      <h3
+        class="featured-products__heading ff-heading fs-page-heading c-heading"
+        data-theme-editor-setting="section.{{ section.id }}.title"
+      >
+        {{ heading }}
+      </h3>
+    {%- endif -%}
+
+    {%- if subheading != blank -%}
+      <p
+        class="featured-products__subheading ff-body fs-primary-body c-subheading"
+        data-theme-editor-setting="section.{{ section.id }}.subheading"
+      >
+        {{ subheading }}
+      </p>
+    {%- endif -%}
+
+    <div class="featured-products__relative">
+      <div class="featured-products__slider mobile-carousel" data-slider>
+        {%- for block in blocks -%}
+          {%- assign product = all_products[block.settings.product] -%}
+          <div class="featured-products__slide" data-slide>
+            {% render 'product-item' with product: product %}
+          </div>
+        {%- else -%}
+          {%- for i in (1..3) -%}
+            <div class="featured-products__slide" data-slide>
+              {% render 'product-item' %}
+            </div>
+          {%- endfor -%}
+        {%- endfor -%}
+        {% render 'carousel-pagination' %}
+      </div>
+    </div>
+
+    <div class="featured-products__blocks">
+      {%- for block in blocks -%}
+        {%- assign product = all_products[block.settings.product] -%}
+        <div class="featured-products__block">
+          <a
+            href="{{ product.url }}"
+            class="featured-products__product-image hover"
+            {%- if product != blank -%}
+              title="{{product.title}}"
+            {%- else -%}
+              title="Placeholder product"
+            {%- endif -%}
+          >
+            {%- if product != blank -%}
+              {% render 'nativeImage' with image: product.featured_media.preview_image, id: product.handle, sizes: "(min-width: 640px) 85px, 50%" %}
+            {%- else -%}
+              <div class="placeholder-image">
+                {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+              </div>
+            {%- endif -%}
+          </a>
+
+          <h4 class="featured-products__block-heading ff-body fs-body-base c-body">
+            {{ product.title | default: product_title }}
+          </h4>
+          <a class="ff-body fs-body-base link" href="{{ product.url }}">
+            {{- 'sections.featured_products.shop_now' | t -}}
+          </a>
+        </div>
+      {%- else -%}
+        {%- for i in (1..3) -%}
+          <div class="featured-products__block">
+            <a class="featured-products__product-image placeholder-image" href="#">
+              {{ 'product-' | append: i | placeholder_svg_tag: 'placeholder-svg' }}
+            </a>
+            <h4 class="featured-products__block-heading ff-body fs-body-base c-body">
+              {{ 'sections.featured_products.placeholder.product_title' | t }}
+            </h4>
+            <a class="ff-body fs-body-base link" href="#">{{ 'sections.featured_products.shop_now' | t }}</a>
+          </div>
+        {%- endfor -%}
+      {%- endfor -%}
+    </div>
+
+    {%- if link != blank and link_text != blank -%}
+      <div class="featured-products__button">
+        <a
+          class="btn btn--primary"
+          href="{{ link }}"
+          data-theme-editor-setting="section.{{ section.id }}.link_text"
+        >
+          {{ link_text }}
+        </a>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "t:sections.featured_products.name",
+  "class": "grid-section",
+  "disabled_on": {
+    "groups": ["header", "custom.overlay"],
+    "templates": ["password"]
+  },
+  "settings": [
+    {
+      "id": "image",
+      "type": "image_picker",
+      "label": "t:sections.featured_products.settings.image.label",
+      "info": "We recommend using an image where the height is greater than the width."
+    },
+    {
+      "id": "image_position",
+      "type": "select",
+      "label": "t:sections.featured_products.settings.image_position.label",
+      "options": [
+        { "value": "left", "label": "t:sections.featured_products.settings.image_position.options.left" },
+        { "value": "right", "label": "t:sections.featured_products.settings.image_position.options.right" }
+      ],
+      "default": "left"
+    },
+    {
+      "id": "title",
+      "type": "text",
+      "label": "t:sections.featured_products.settings.title.label",
+      "default": "Featured Products"
+    },
+    {
+      "id": "subheading",
+      "type": "text",
+      "label": "t:sections.featured_products.settings.subheading.label",
+      "default": "Use this section to show off a few of your favourite products"
+    },
+    {
+      "id": "link",
+      "type": "url",
+      "label": "t:sections.featured_products.settings.link.label",
+      "default": "/"
+    },
+    {
+      "id": "link_text",
+      "type": "text",
+      "label": "t:sections.featured_products.settings.link_text.label",
+      "default": "Shop the collection"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.featured_products.settings.style_section_header"
+    },
+    {
+      "id": "enable_contrast",
+      "type": "checkbox",
+      "label": "t:sections.featured_products.settings.enable_contrast.label",
+      "info": "t:sections.featured_products.settings.enable_contrast.info",
+      "default": true
+    },
+    {
+      "id": "enable_full_width",
+      "type": "checkbox",
+      "label": "t:shared.enable_full_width.label",
+      "info": "t:shared.enable_full_width.info",
+      "default": false
+    }
+  ],
+  "blocks": [
+    {
+      "type": "product",
+      "name": "t:sections.featured_products.blocks.name",
+      "settings": [
+        {
+          "id": "product",
+          "type": "product",
+          "label": "t:sections.featured_products.blocks.settings.product.label"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 3,
+  "presets": [
+    {
+      "name": "t:sections.featured_products.presets.name",
+      "category": "Product"
+    }
+  ]
+}
+{% endschema %}

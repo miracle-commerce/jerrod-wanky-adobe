@@ -1,0 +1,84 @@
+{% comment %}
+  Pass these variables into snippet:
+  * image: Image object
+  * sizes: srcset size attribute
+  * prioritizeLoading: is this image rendered above the fold or otherwise priotized? this will avoid loading="lazy"
+{% endcomment %}
+
+{%- liquid
+  if tagName == blank
+    assign tagName = "img"
+  endif
+
+  if baseSize == blank
+    assign baseSize = 320
+  endif
+
+  if lazy
+    assign srcAttr = "data-src"
+    assign srcSetAttr = "data-srcset"
+  else
+    assign srcAttr = "src"
+    assign srcSetAttr = "srcset"
+  endif
+
+  if focal_point == 'image_presentation' and image.presentation.focal_point == '50.0% 50.0%'
+    assign focal_point = 'center'
+  endif
+
+  if focal_point
+    if focal_point == 'image_presentation'
+      assign focal_alignment = image.presentation.focal_point
+    else
+      assign focal_alignment = focal_point | replace: '_', ' '
+    endif
+  endif
+-%}
+
+<{{tagName}} 
+  alt="{{ image.alt | escape }}" 
+  class="image__img {% if className %}{{className}}{% endif %}"
+  style="
+    {%- if focal_alignment and object_fit != 'contain' -%}--focal-alignment: {{ focal_alignment }};{%- endif -%}
+    {%- if object_fit != blank and aspect_ratio != 'natural' -%}--object-fit: {{ object_fit }};{%- endif -%}
+  "
+  {% unless prioritizeLoading %}
+  loading="lazy"
+  {% endunless %}
+  width={{image.width}}
+  height={{image.height}}
+  {% unless tagName == "source" %}{{srcAttr}}="{{ image | image_url: width: baseSize }}"{% endunless %}
+  {% if media %}media="{{media}}"{% endif %}
+  {{srcSetAttr}}="{{ image | image_url: width: 200 }} 200w,
+                  {{ image | image_url: width: 240 }} 240w,
+                  {{ image | image_url: width: 280 }} 280w,
+                  {{ image | image_url: width: 300 }} 300w,
+                  {{ image | image_url: width: 360 }} 360w,
+                  {{ image | image_url: width: 400 }} 400w,
+                  {{ image | image_url: width: 450 }} 450w,
+                  {{ image | image_url: width: 500 }} 500w,
+                  {{ image | image_url: width: 550 }} 550w,
+                  {{ image | image_url: width: 600 }} 600w,
+                  {{ image | image_url: width: 650 }} 650w,
+                  {{ image | image_url: width: 700 }} 700w,
+                  {{ image | image_url: width: 750 }} 750w,
+                  {{ image | image_url: width: 800 }} 800w,
+                  {{ image | image_url: width: 850 }} 850w,
+                  {{ image | image_url: width: 900 }} 900w,
+                  {{ image | image_url: width: 950 }} 950w,
+                  {{ image | image_url: width: 1000 }} 1000w
+{% if image.width > 1000 %}, {{ image | image_url: width: 1100 }} 1100w {% endif %}
+{% if image.width > 1100 %}, {{ image | image_url: width: 1200 }} 1200w {% endif %}
+{% if image.width > 1200 %}, {{ image | image_url: width: 1300 }} 1300w {% endif %}
+{% if image.width > 1300 %}, {{ image | image_url: width: 1400 }} 1400w {% endif %}
+{% if image.width > 1400 %}, {{ image | image_url: width: 1500 }} 1500w {% endif %}
+{% if image.width > 1500 %}, {{ image | image_url: width: 1600 }} 1600w {% endif %}
+{% if image.width > 1600 %}, {{ image | image_url: width: 1800 }} 1800w {% endif %}
+{% if image.width > 1800 %}, {{ image | image_url: width: 2000 }} 2000w {% endif %}
+{% if image.width > 2000 %}, {{ image | image_url: width: 2200 }} 2200w {% endif %}
+{% if image.width > 2200 %}, {{ image | image_url: width: 2400 }} 2400w {% endif %}
+{% if image.width > 2400 %}, {{ image | image_url: width: 2600 }} 2600w {% endif %}
+{% if image.width > 2600 %}, {{ image | image_url: width: 2800 }} 2800w {% endif %}
+{% if image.width > 2800 %}, {{ image | image_url: width: 3000 }} 3000w {% endif %}
+{% if image.width > 2000 %}, {{ image | image_url: width: 3200 }} 3200w {% endif %}"
+     sizes="{{sizes}}" />

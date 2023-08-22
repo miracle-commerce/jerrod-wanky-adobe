@@ -1,0 +1,68 @@
+{% liquid
+  assign brightness_drawer_background = settings.color_text_drawer | color_brightness
+  if brightness_drawer_background > 60
+    assign color_background_button_hover_popup = settings.color_text_drawer | color_darken: 20
+  else
+    assign color_background_button_hover_popup = settings.color_text_drawer | color_lighten: 20
+  endif
+%}
+
+<div
+  class="quick-cart"
+  data-quick-cart
+  style="--color-button-background-hover: {{ color_background_button_hover_popup }};"
+>
+  <div class="quick-cart__overlay" data-overlay></div>
+
+  <div class="quick-cart__container">
+    <div class="quick-cart__cart visible" data-cart data-scroll-lock-ignore>
+      <div class="quick-cart__header">
+        {{ 'quick_cart.cart' | t }}
+        <button type="button" data-close aria-label="{{ 'general.accessibility.close_modal' | t }}">
+          {% render 'icon' with icon: 'close' %}
+        </button>
+      </div>
+      <div class="quick-cart__items" data-items></div>
+      <div class="quick_cart__empty ff-body" data-empty>
+        {{ 'quick_cart.empty' | t }}
+        <button type="button" data-close aria-label="{{ 'general.accessibility.close_modal' | t }}">
+          {{ 'quick_cart.shop_cta' | t }}</button
+        >.
+      </div>
+      <div class="quick-cart__footer ff-body ta-c" data-footer>
+        <div class="quick-cart__discounts c-subdued" data-discounts></div>
+
+        {%- capture taxes_shipping_checkout -%}
+          {%- if cart.taxes_included and shop.shipping_policy.body != blank -%}
+            {{ 'cart.general.taxes_included_and_shipping_policy_html' | t: link: shop.shipping_policy.url }}
+          {%- elsif cart.taxes_included -%}
+            {{ 'cart.general.taxes_included_but_shipping_at_checkout' | t }}
+          {%- elsif shop.shipping_policy.body != blank -%}
+            {{ 'cart.general.taxes_and_shipping_policy_at_checkout_html' | t: link: shop.shipping_policy.url }}
+          {%- else -%}
+            {{ 'cart.general.taxes_and_shipping_at_checkout' | t }}
+          {%- endif -%}
+        {%- endcapture -%}
+
+        <p>
+          {{
+            'cart.popup.quick_cart_note_html'
+            | t: subtotal: '<span data-subtotal>$-.--</span>', shipping_taxes: taxes_shipping_checkout
+          }}
+        </p>
+        <a href="{{ routes.cart_url }}" class="btn btn--primary btn--short btn--full">
+          {{- 'quick_cart.go_to_cart' | t -}}
+        </a>
+      </div>
+    </div>
+
+    <div class="quick-cart__configure" data-configure>
+      <div class="quick-add loading" data-scroll-lock-ignore data-add>
+        <div class="quick-add__configure" data-contents></div>
+        <div class="quick-add__loading-wrap">
+          <div class="quick-add__loading-bar"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

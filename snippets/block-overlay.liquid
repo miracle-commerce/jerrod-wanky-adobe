@@ -1,0 +1,82 @@
+{% liquid
+  assign align = alignment | split: '_'
+  assign opacity = opacity | divided_by: 100.0
+
+  assign brightness_button = color_background_button | color_brightness
+  if brightness_button > 60
+    assign color_background_button_hover = color_background_button | color_darken: 20
+  else
+    assign color_background_button_hover = color_background_button | color_lighten: 20
+  endif
+
+  assign has_content = false
+  if meta != blank or heading != blank or subheading != blank or link != blank or link_text != blank
+    assign has_content = true
+  endif
+%}
+
+<div
+  class="
+    block-overlay
+    block-overlay--h-{{ align[0] }}
+    block-overlay--v-{{ align[1] }}
+    {% if has_content != true %}block-overlay--no-content{% endif %}
+  "
+  style="
+    --color-background: {{ color_background }};
+    --overlay-opacity: {{ opacity }};
+    {% if color_overlay_gradient != blank %}
+      --gradient-background: {{ color_overlay_gradient }};
+    {% endif %}
+
+    --color-background-button: {{ color_background_button }};
+    --color-background-button-hover: {{ color_background_button_hover }};
+
+    --color-text-meta: {{ color_heading | color_modify: 'alpha', 0.75 }};
+    --color-text-heading: {{ color_heading }};
+    --color-text-subheading: {{ color_subheading }};
+    --color-text-button: {{ color_text_button }};
+    --max-width-content: {{ max_width_content }}em;
+  "
+>
+  <div class="block-overlay__content">
+    {%- if meta != blank -%}
+      <div
+        class="block-overlay__meta ff-meta fs-meta{% if can_animate %} animation--item{% endif %}"
+        data-theme-editor-setting="section.{{ section.id }}.block.{{ block.id }}.meta"
+      >
+        {{ meta }}
+      </div>
+    {%- endif -%}
+
+    {%- if heading != blank -%}
+      <h4
+        class="block-overlay__heading ff-heading fs-page-heading{% if can_animate %} animation--item{% endif %}"
+        data-theme-editor-setting="section.{{ section.id }}.block.{{ block.id }}.title"
+      >
+        {{ heading }}
+      </h4>
+    {%- endif -%}
+
+    {%- if subheading != blank -%}
+      <div
+        class="block-overlay__subheading ff-body fs-primary-body{% if can_animate %} animation--item{% endif %}"
+        data-theme-editor-setting="section.{{ section.id }}.block.{{ block.id }}.subheading"
+      >
+        {{ subheading }}
+      </div>
+    {%- endif -%}
+
+    {%- if link != blank and link_text != blank -%}
+      <div class="block-overlay__button{% if can_animate %} animation--item{% endif %}">
+        <a
+          class="btn btn--primary"
+          href="{{ link }}"
+          data-theme-editor-setting="section.{{ section.id }}.block.{{ block.id }}.link_text"
+        >
+          {{ link_text }}
+        </a>
+      </div>
+    {%- endif -%}
+  </div>
+</div>

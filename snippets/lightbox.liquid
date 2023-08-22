@@ -1,0 +1,53 @@
+<div class="lightbox" data-lightbox>
+  {% if images.size > 1 %}
+    <div class="lightbox__image-nav">
+      <div class="lightbox__image-nav-inner">
+        {%- for image in images -%}
+          <button type="button" class="lightbox__image-nav-image" data-nav-item data-index="{{ forloop.index0 }}">
+            {% render 'image' with image: image, disable_style: true %}
+          </button>
+        {%- endfor -%}
+      </div>
+    </div>
+  {% endif %}
+
+  <div class="lightbox__nav">
+    <button
+      type="button"
+      class="lightbox__button lightbox__button-previous"
+      aria-label="{{ 'general.accessibility.carousel_previous' | t }}"
+      data-prev
+    >
+      {% render 'icon', with icon: 'arrow_back' %}
+    </button>
+    <button
+      class="lightbox__button lightbox__button-close"
+      data-close
+      aria-label="{{ 'general.accessibility.close_modal' | t }}"
+    >
+      {% render 'icon' with icon: 'close' %}
+    </button>
+    <button
+      type="button"
+      class="lightbox__button lightbox__button-next"
+      aria-label="{{ 'general.accessibility.carousel_next' | t }}"
+      data-next
+    >
+      {% render 'icon', with icon: 'arrow_forward' %}
+    </button>
+  </div>
+  <div class="lightbox__images-wrapper">
+    <div class="lightbox__images" data-slider data-scroll-lock-ignore>
+      {%- for image in images -%}
+        <div
+          class="lightbox__image"
+          data-id="{{ image.id }}"
+          data-slide
+          data-slide-index="{{ forloop.index0 }}"
+        >
+          {% render 'image' with image: image, disable_style: true %}
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</div>

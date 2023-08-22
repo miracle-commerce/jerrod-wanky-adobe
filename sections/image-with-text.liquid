@@ -1,0 +1,224 @@
+{% liquid
+  assign image = section.settings.image
+  assign image_position = section.settings.image_position
+  assign image_width = section.settings.image_width
+  assign video = section.settings.video_url
+
+  assign max_width_heading = section.settings.max_width_title
+  assign max_width_subheading = section.settings.max_width_text
+  assign contrast = section.settings.enable_contrast
+  assign full_width = section.settings.enable_full_width
+%}
+
+<section
+  class="
+    image-with-text
+    image-with-text--p-{{ image_position }}
+    image-with-text--w-{{ image_width }}
+    {% if contrast %}
+      contrast
+    {% endif %}
+    {% if full_width %}
+      full-width
+    {% endif %}
+  "
+  data-section-id="{{ section.id }}"
+  data-section-type="image-with-text"
+  style="    --max-width-content: {{ max_width_subheading }}em;"
+>
+  <div class="image-with-text__image {% if image != blank %}image-with-text__image--present{% endif %}">
+    {% if video != blank %}
+      <video autoplay playsinline loop muted src="{{ video }}"></video>
+    {% endif %}
+
+    {% if image != blank %}
+      {% render 'flexible-image' with image: image %}
+    {% endif %}
+
+    {% if image == blank and video == blank %}
+      <div class="placeholder-image">
+        {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="image-with-text__text">
+    <div class="image-with-text__content">
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
+          {%- when 'heading' -%}
+            {%- unless block.settings.heading_title == blank -%}
+              <h3
+                class="image-with-text__heading ff-heading fs-page-heading c-heading"
+                data-theme-editor-setting="section.{{ section.id }}.title"
+              >
+                {{ block.settings.heading_title }}
+              </h3>
+            {%- endunless -%}
+
+          {%- when 'text' -%}
+            {%- unless block.settings.text == blank -%}
+              <div
+                class="image-with-text__subheading fs-primary-body c-subheading"
+                data-theme-editor-setting="section.{{ section.id }}.text"
+              >
+                {{ block.settings.text }}
+              </div>
+            {%- endunless -%}
+
+          {%- when 'button' -%}
+            {%- if block.settings.link != blank and block.settings.link_text != blank -%}
+              <div class="image-with-text__button">
+                <a
+                  class="btn btn--primary"
+                  href="{{ block.settings.link }}"
+                  data-theme-editor-setting="section.{{ section.id }}.link_text"
+                >
+                  {{ block.settings.link_text }}
+                </a>
+              </div>
+            {%- endif -%}
+        {%- endcase -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "t:sections.image_with_text.name",
+  "class": "grid-section",
+  "disabled_on": {
+    "groups": ["header", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "id": "image",
+      "type": "image_picker",
+      "label": "t:sections.image_with_text.settings.image.label",
+      "info": "t:sections.image_with_text.settings.image.info"
+    },
+    {
+      "type": "url",
+      "id": "video_url",
+      "label": "t:sections.image_with_text.settings.video_url.label",
+      "info": "t:sections.image_with_text.settings.video_url.info"
+    },
+    {
+      "id": "image_width",
+      "type": "select",
+      "label": "t:sections.image_with_text.settings.image_width.label",
+      "options": [
+        { "value": "standard", "label": "t:sections.image_with_text.settings.image_width.options.standard" },
+        { "value": "larger", "label": "t:sections.image_with_text.settings.image_width.options.larger" }
+      ],
+      "default": "standard"
+    },
+    {
+      "id": "image_position",
+      "type": "select",
+      "label": "t:sections.image_with_text.settings.image_position.label",
+      "options": [
+        { "value": "left", "label": "t:sections.image_with_text.settings.image_position.options.left" },
+        { "value": "right", "label": "t:sections.image_with_text.settings.image_position.options.right" }
+      ],
+      "default": "left"
+    },
+    {
+      "id": "max_width_text",
+      "type": "range",
+      "label": "t:sections.image_with_text.settings.max_width_text.label",
+      "min": 20,
+      "max": 46,
+      "step": 2,
+      "default": 34
+    },
+    {
+      "id": "enable_contrast",
+      "type": "checkbox",
+      "label": "t:sections.image_with_text.settings.enable_contrast.label",
+      "info": "t:sections.image_with_text.settings.enable_contrast.info",
+      "default": true
+    },
+    {
+      "id": "enable_full_width",
+      "type": "checkbox",
+      "label": "t:shared.enable_full_width.label",
+      "info": "t:shared.enable_full_width.info",
+      "default": false
+    }
+  ],
+  "blocks": [
+    {
+      "type": "heading",
+      "name": "t:sections.image_with_text.blocks.heading.name",
+      "limit": 1,
+      "settings": [
+        {
+          "id": "heading_title",
+          "type": "text",
+          "label": "t:sections.image_with_text.blocks.heading.settings.section_heading.label",
+          "default": "Rich text"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "t:sections.image_with_text.blocks.text.name",
+      "limit": 1,
+      "settings": [
+        {
+          "id": "text",
+          "type": "richtext",
+          "label": "t:sections.image_with_text.blocks.text.settings.text.label",
+          "default": "<p>Use this text area to share information about your brand with your customers. Describe a product, share announcements, or welcome customers to your store.</p>"
+        }
+      ]
+    },
+    {
+      "type": "button",
+      "name": "t:sections.image_with_text.blocks.button.name",
+      "limit": 1,
+      "settings": [
+        {
+          "id": "link",
+          "type": "url",
+          "label": "t:sections.image_with_text.blocks.button.settings.link.label"
+        },
+        {
+          "id": "link_text",
+          "type": "text",
+          "label": "t:sections.image_with_text.blocks.button.settings.link_text.label",
+          "default": "Read more"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.image_with_text.presets.name",
+      "blocks": [
+        {
+          "type": "heading",
+          "settings": {
+            "heading_title": "Image with text"
+          }
+        },
+        {
+          "type": "text",
+          "settings": {
+            "text": "<p>Use these sections to promote a particular feature with editorial photography.</p>"
+          }
+        },
+        {
+          "type": "button",
+          "settings": {
+            "link": "#",
+            "link_text": "Shop the collection"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

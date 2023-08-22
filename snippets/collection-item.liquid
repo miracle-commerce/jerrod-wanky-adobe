@@ -1,0 +1,64 @@
+{%- liquid
+  assign disabled_image_style = false
+
+  if aspect_ratio != 'natural'
+    assign disabled_image_style = true
+  endif
+-%}
+
+<div class="collection-item collection-item--{{ aspect_ratio }}">
+  {%- if collection.image != blank or collection.products.first != blank -%}
+    {%- assign image_object = collection.image | default: collection.products.first.featured_media.preview_image -%}
+    {%- assign image_id = collection.image.id | default: collection.products.first.featured_media.id -%}
+
+    <a href="{{ collection.url }}" class="hover" title="{{collection.title}}">
+      {% render 'image' with
+        image: image_object,
+        id: image_id,
+        wrapper_class: 'collection-item__image borders',
+        disable_style: disabled_image_style
+      %}
+    </a>
+  {%- elsif collection == empty -%}
+    {% capture current %}{% cycle 1, 2, 3, 4, 5, 6 %}{% endcapture %}
+    <div class="collection-item__image placeholder-image borders">
+      {{ 'collection-' | append: current | placeholder_svg_tag: 'placeholder-svg' }}
+    </div>
+  {%- endif -%}
+
+  <div class="collection-item__footer">
+    <h4 class="collection-item__header ff-heading fs-heading-small c-heading">
+      {%- if collection == empty -%}
+        {{ 'collections.general.collection_label' | t }}
+      {%- else -%}
+        <a href="{{ collection.url }}">{{ collection.title }}</a>
+      {%- endif -%}
+    </h4>
+
+    <div class="collection-item__preview">
+      {%- assign preview_count = 0 -%}
+      {%- if collection != empty -%}
+        {% paginate collection.products by 3 %}
+          {%- assign preview_count = collection.products.count -%}
+          {% for product in collection.products %}
+              <a class="circle" href="{{ product.url }}" title="{{product.title}}">
+                {%- if product.featured_media.preview_image -%}
+                  {% render 'image' with
+                    image: product.featured_media.preview_image,
+                    id: product.featured_media.id,
+                    wrapper_class: ''
+                  %}
+                {%- endif -%}
+              </a>
+          {% endfor %}
+        {% endpaginate %}
+      {%- endif -%}
+
+      {%- if collection != empty and collection.all_products_count > 3 -%}
+        <a href="{{ collection.url }}" class="circle circle--count fs-body-small">
+          <span>+{{ collection.all_products_count | minus: preview_count }}</span>
+        </a>
+      {%- endif -%}
+    </div>
+  </div>
+</div>

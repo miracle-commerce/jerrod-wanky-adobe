@@ -1,0 +1,184 @@
+{% liquid
+  assign heading = section.settings.heading
+  assign per_row = section.settings.per_row
+  assign rows = section.settings.rows
+  assign max_products = per_row | times: rows
+  assign aspect_ratio = section.settings.aspect_ratio
+  assign should_render_content = false
+
+  if section.settings.product_source == 'custom-product-list' and section.settings.product_list.count > 0
+    assign should_render_content = true
+  elsif section.settings.product_source == 'app-recommendations'
+    assign should_render_content = true
+  elsif request.design_mode
+    assign should_render_content = true
+  endif
+%}
+{%- if should_render_content -%}
+  {% capture placeholder_products %}
+    {%- for i in (1..max_products) -%}
+      {% capture current %}{% cycle 1, 2, 3, 4, 5, 6 %}{% endcapture %}
+      <div
+        class="complementary-products__product complementary-products__product"
+        data-items-per-row="{{ per_row }}"
+        data-slide
+      >
+        <div class="product-item product-item--{{ aspect_ratio }}">
+          <div class="product-item__media borders">
+            <div class="product-item__image placeholder-image">
+              {{ 'product-' | append: current | placeholder_svg_tag: 'placeholder-svg' }}
+            </div>
+          </div>
+          <div class="product-item__text fs-body-base">
+            <h4>{{ 'homepage.onboarding.product_title' | t }}</h4>
+            <span>
+              {{- 1999 | money -}}
+              {%- if settings.currency_code_enabled %} {{ cart.currency.iso_code }}{% endif -%}
+            </span>
+          </div>
+        </div>
+      </div>
+    {%- endfor -%}
+  {% endcapture %}
+
+  {% capture product_list_products %}
+    {%- for product_item in section.settings.product_list limit: max_products -%}
+      <div
+        class="complementary-products__product complementary-products__product"
+        data-items-per-row="{{ per_row }}"
+        data-slide
+      >
+        {%
+          render 'product-item',
+          product: product_item,
+          aspect_ratio: aspect_ratio
+        %}
+      </div>
+    {%- endfor -%}
+  {% endcapture %}
+
+  {% capture app_recommended_products %}
+    {%- for product_item in recommendations.products -%}
+      <div
+        class="complementary-products__product complementary-products__product"
+        data-items-per-row="{{ per_row }}"
+        data-slide
+      >
+        {%
+          render 'product-item',
+          product: product_item,
+          aspect_ratio: aspect_ratio
+        %}
+      </div>
+    {%- endfor -%}
+  {% endcapture %}
+
+  <section
+    class="
+      complementary-products
+      s-inline-section
+      {% if section.settings.product_source == 'app-recommendations' %}hidden{% endif %}
+    "
+    data-partial
+    data-section-type="complementary-products"
+    data-section-id="{{ section.id }}"
+    data-product-id="{{ product.id }}"
+    data-limit="{{ max_products }}"
+    data-product-source="{{ section.settings.product_source }}"
+  >
+    {% render 'section-header', heading: heading %}
+
+    <div class="complementary-products__wrapper">
+      <div class="complementary-products__grid mobile-carousel" data-slider>
+        {%- if section.settings.product_source == 'custom-product-list' and section.settings.product_list.count > 0 -%}
+          {{ product_list_products }}
+        {%- elsif recommendations.performed and recommendations.products_count > 0 -%}
+          {{ app_recommended_products }}
+        {%- elsif request.design_mode -%}
+          {{ placeholder_products }}
+        {%- endif -%}
+        {% render 'carousel-pagination' %}
+      </div>
+    </div>
+  </section>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "t:sections.complementary_products.name",
+  "class": "inline-section",
+  "templates": ["product"],
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "t:sections.complementary_products.settings.heading.label",
+      "default": "Pairs well with",
+      "info": "t:sections.complementary_products.settings.heading.info"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.complementary_products.settings.header__products.content"
+    },
+    {
+      "id": "per_row",
+      "type": "range",
+      "label": "t:sections.recommended_products.settings.per_row.label",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "id": "rows",
+      "type": "range",
+      "label": "t:sections.recommended_products.settings.rows.label",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "default": 1
+    },
+    {
+      "id": "aspect_ratio",
+      "type": "select",
+      "label": "t:shared.aspect_ratio.label",
+      "options": [
+        { "label": "t:shared.aspect_ratio.options.natural", "value": "natural" },
+        { "label": "t:shared.aspect_ratio.options.square", "value": "square" },
+        { "label": "t:shared.aspect_ratio.options.landscape", "value": "landscape" },
+        { "label": "t:shared.aspect_ratio.options.portrait", "value": "portrait" }
+      ],
+      "default": "natural"
+    },
+    {
+      "type": "radio",
+      "id": "product_source",
+      "label": "t:sections.complementary_products.settings.product_source.label",
+      "options": [
+        {
+          "value": "custom-product-list",
+          "label": "t:sections.complementary_products.settings.product_source.option_custom_product_list"
+        },
+        {
+          "value": "app-recommendations",
+          "label": "t:sections.complementary_products.settings.product_source.option_app_recommendations"
+        }
+      ],
+      "default": "app-recommendations",
+      "info": "t:sections.complementary_products.settings.product_source.info"
+    },
+    {
+      "id": "product_list",
+      "type": "product_list",
+      "label": "t:sections.complementary_products.settings.products_list.label",
+      "info": "t:sections.complementary_products.settings.products_list.info"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Complementary products",
+      "settings": {}
+    }
+  ]
+}
+{% endschema %}

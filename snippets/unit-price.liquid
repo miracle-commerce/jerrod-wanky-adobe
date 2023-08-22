@@ -1,0 +1,29 @@
+<dl
+  data-unit-price-container
+  class="unit-price fs-body-base{% if item.unit_price_measurement %} unit-price--available{% endif %}"
+>
+  <dt>
+    <span class="visually-hidden visually-hidden--inline">{{ 'products.product.unit_price_label' | t }}</span>
+  </dt>
+  <dd class="unit-price__price{% if item.unit_price_measurement %} unit-price--available{% endif %}">
+    {%- capture unit_price_separator -%}
+    <span aria-hidden="true">/</span><span class="visually-hidden">{{ 'general.accessibility.unit_price_separator' | t }}&nbsp;</span>
+    {%- endcapture -%}
+    {%- capture unit_price_base_unit -%}
+      <span data-unit-price-base-unit>
+        {%- if item.unit_price_measurement -%}
+          {%- if item.unit_price_measurement.reference_value != 1 -%}
+            {{- item.unit_price_measurement.reference_value -}}
+          {%- endif -%}
+          {{ item.unit_price_measurement.reference_unit }}
+        {%- endif -%}
+      </span>
+    {%- endcapture -%}
+    <span data-unit-price>
+      {{- item.unit_price | money }}
+      {% if settings.currency_code_enabled %} {{ cart.currency.iso_code }}{% endif %}
+    </span>
+    {{- unit_price_separator -}}
+    <span data-unit-base>{{- unit_price_base_unit -}}</span>
+  </dd>
+</dl>

@@ -1,0 +1,31 @@
+<ul class="navigation__submenu fs-body-base" data-submenu data-depth="{{ depth }}">
+  {%- assign depth = depth | plus: 1 -%}
+
+  {%- for link in menu -%}
+    {%- if link.links.size > 0 -%}
+      {%- assign has_children = true -%}
+    {%- endif -%}
+
+    <li class="navigation__submenu-item">
+      <a
+        href="{{ link.url }}"
+        class="{% if has_children %}no-transition{% endif %} {% if link.active %}active{% endif %}"
+        data-link
+        {% if has_children %}data-parent{% endif %}
+      >
+        {{ link.title }}
+
+        {% if has_children %}
+          {% render 'icon' with icon: 'arrow-drop-down' %}
+        {% endif %}
+      </a>
+
+      {%- if has_children -%}
+        {% render 'navigation-submenu', menu: link.links, depth: depth %}
+      {%- endif -%}
+
+    </li>
+
+    {%- assign has_children = false -%}
+  {%- endfor -%}
+</ul>

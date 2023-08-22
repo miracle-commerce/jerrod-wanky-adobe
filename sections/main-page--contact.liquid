@@ -1,0 +1,66 @@
+<section
+  class="contact"
+  data-section-id="{{ section.id }}"
+  data-section-type="contact"
+>
+  {%- if section.blocks.size > 0 -%}
+    <div class="contact__container">
+      {%- for block in section.blocks -%}
+        <div class="contact__image">
+          {%- if block.settings.image -%}
+            {% render 'image',
+              image: block.settings.image,
+              focal_point: 'image_presentation',
+              wrapper_class: 'borders'
+            %}
+          {%- else -%}
+            <div class="placeholder-image">
+              {{ 'image' | append: current | placeholder_svg_tag: 'placeholder-svg' }}
+            </div>
+          {%- endif -%}
+        </div>
+      {%- endfor -%}
+
+      <div class="contact__content">
+        <h1 class="contact__heading ff-heading fs-page-heading c-heading">{{ page.title }}</h1>
+        {%- if page.content != blank -%}
+          <div class="contact__text ff-body fs-primary-body c-body rte">{{ page.content }}</div>
+        {%- endif -%}
+
+        {% render 'contact-form' %}
+      </div>
+    </div>
+
+  {% else %}
+    <header class="page__header">
+      <h1 class="page__heading ff-heading c-heading">{{ page.title }}</h1>
+    </header>
+
+    <div class="page__rte ff-body rte rte--page">
+      {{ page.content }}
+      {% render 'contact-form' %}
+    </div>
+  {% endif %}
+</section>
+
+{% schema %}
+{
+  "name": "Contact page",
+  "class": "page-section",
+  "blocks": [
+    {
+      "type": "image",
+      "name": "t:sections.main_page_contact.blocks.image.name",
+      "limit": 1,
+      "settings": [
+        {
+          "id": "image",
+          "type": "image_picker",
+          "label": "t:sections.main_page_contact.blocks.image.settings.image.label",
+          "info": "t:sections.main_page_contact.blocks.image.settings.image.info"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,37 @@
+{%- comment -%}TODO: create a new "results-item" class that is shared here and collection item? {%- endcomment -%}
+{%- liquid
+  if aspect_ratio == blank
+    assign aspect_ratio = 'natural'
+  endif 
+  assign disabled_image_style = false
+  if aspect_ratio != 'natural'
+    assign disabled_image_style = true
+  endif
+-%}
+
+<div class="product-item product-item--{{ aspect_ratio }} search-result-item">
+  <div class="product-item__media">
+    <a class="product-item__image-link borders" href="{{ item.url }}" title="{{item.title}}">
+      {% if item.image != blank %}
+        {% render 'image' with 
+          image: item.image, 
+          id: image.id,
+          disable_style: true,
+          wrapper_class: 'product-item__image',
+           %}
+      {% else %}
+        <div class="placeholder-image search-result-placeholder-image">
+          {% render 'icon' with icon: 'alphabetical' %}
+        </div>
+      {% endif %}
+    </a>
+  </div>
+
+  <div class="product-item__meta fs-body-base c-body">
+    <div class="product-item__text ff-body">
+      <h4>{{item.title}}</h4>
+      <p class="ff-body fs-body-base">{{ item.content | strip_html | truncate: 120 }}</p>
+    </div>
+    
+  </div>
+</div>

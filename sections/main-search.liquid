@@ -1,0 +1,187 @@
+{% liquid
+  assign per_row = section.settings.per_row
+  assign per_page = section.settings.per_page
+  assign show_sort = section.settings.show_sort
+  assign show_filter = section.settings.show_filter
+  assign show_sidebar = false
+
+  if show_sort or show_filter
+    assign show_sidebar = true
+  endif
+%}
+
+<section
+  class="
+    collection-intro
+    s-inline-section
+  "
+  data-section-id="{{ section.id }}"
+  data-section-type="collection-intro"
+  style="--image-position: {{ section.settings.image_position }};"
+>
+  {% if search.performed %}
+    <h1 class="page__heading ff-heading fs-heading-base">
+      {{ 'search.results_with_count' | t: terms: search.terms, count: search.results_count }}
+    </h1>
+  {% else %}
+    <h1 class="page__heading ff-heading fs-heading-base">{{ 'search.title' | t }}</h1>
+  {% endif %}
+
+  <form action="{{ routes.search_url }}" class="search__form" method="get" role="search">
+    <input
+      type="search"
+      name="q"
+      id="Search"
+      class="input input--round"
+      value="{{ search.terms | escape }}"
+      placeholder="{{ 'search.placeholder' | t }}"
+      autocomplete="off"
+    >
+    <input type="hidden" name="options[prefix]" value="last">
+    <button type="submit" class="search__submit" title="Submit">
+      {% render 'icon-button' with icon: 'search' %}
+    </button>
+  </form>
+</section>
+
+{% paginate search.results by per_page %}
+  <section
+    class="search"
+    data-section-id="{{ section.id }}"
+    data-section-type="search"
+  >
+    {% if search.performed %}
+      <div class="collection__loading" data-js-loading>
+        {% render 'loader' %}
+      </div>
+
+      <div class="search-results-wrapper">
+        {%- if show_sidebar and search.results_count > 0 -%}
+          <div class="collection__sidebar" data-js-sidebar>
+            <a href="#products" class="skip-to-content-button">
+              {{ 'general.accessibility.skip_to_content' | t }}
+            </a>
+            {%
+              render 'collection-sidebar' with
+              results: search,
+              show_sort: show_sort
+              show_filter: show_filter
+            %}
+          </div>
+        {%- endif -%}
+
+        <div class="search__main-area">
+          {% if search.results_count == 0 %}
+            <div id="root" class="collection__main" data-js-partial>
+              {%
+                render 'collection-top-bar' with
+                results: search
+              %}
+              <p class="search__no-results ff-body fs-primary-body ta-c">{{ 'search.no_results' | t }}</p>
+            </div>
+          {% else %}
+            <h2 class="visually-hidden">{{ 'search.heading' | t: count: search.results_count }}</h2>
+
+            {%- if show_sidebar -%}
+              {%
+                render 'mobile-filters' with
+                results: search,
+                show_sort: show_sort
+                show_filter: show_filter
+              %}
+            {%- endif -%}
+
+            <div id="root" class="collection__main" data-js-partial>
+              {%
+                render 'collection-top-bar' with
+                results: search
+              %}
+
+              <div class="results_grid grid animation--grid">
+                {% for item in search.results %}
+                  <div class="grid__item grid__item--{{ per_row }} animation--grid-item">
+                    {%- if item.object_type == 'product' -%}
+                      {%
+                        render 'product-item' with
+                        product: item,
+                        aspect_ratio: section.settings.aspect_ratio,
+                      %}
+                    {%- else -%}
+                      {%
+                        render 'search-result-item' with
+                        item: item,
+                        aspect_ratio: section.settings.aspect_ratio,
+                      %}
+                    {%- endif -%}
+                  </div>
+                {% endfor %}
+              </div>
+
+              <div class="collection__pagination">
+                {% render 'pagination' with paginate: paginate %}
+              </div>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    {% endif %}
+
+    {%
+      render 'mobile-filtering-modal' with
+      results: search,
+      show_sort: section.settings.show_sort,
+      show_filter: section.settings.show_filter
+    %}
+  </section>
+{% endpaginate %}
+
+{% schema %}
+{
+  "name": "t:sections.main_search.name",
+  "settings": [
+    {
+      "id": "show_filter",
+      "type": "checkbox",
+      "label": "t:sections.main_search.settings.show_filter.label",
+      "default": true,
+      "info": "t:sections.main_search.settings.show_filter.info"
+    },
+    {
+      "id": "show_sort",
+      "type": "checkbox",
+      "label": "t:sections.main_search.settings.show_sort.label",
+      "default": true
+    },
+    {
+      "id": "per_row",
+      "type": "range",
+      "label": "t:sections.main_collection_grid.settings.per_row.label",
+      "default": 3,
+      "min": 2,
+      "max": 4,
+      "step": 1
+    },
+    {
+      "id": "per_page",
+      "type": "range",
+      "label": "t:sections.main_collection_grid.settings.per_page.label",
+      "default": 12,
+      "min": 2,
+      "max": 24,
+      "step": 1
+    },
+    {
+      "id": "aspect_ratio",
+      "type": "select",
+      "label": "t:shared.aspect_ratio.label",
+      "options": [
+        { "label": "t:shared.aspect_ratio.options.natural", "value": "natural" },
+        { "label": "t:shared.aspect_ratio.options.square", "value": "square" },
+        { "label": "t:shared.aspect_ratio.options.landscape", "value": "landscape" },
+        { "label": "t:shared.aspect_ratio.options.portrait", "value": "portrait" }
+      ],
+      "default": "square"
+    }
+  ]
+}
+{% endschema %}

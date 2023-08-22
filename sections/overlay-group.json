@@ -1,0 +1,15 @@
+{
+  "type": "custom.overlay",
+  "name": "t:groups.overlay_group.name",
+  "sections": {
+    "popup": {
+      "type": "popup",
+      "disabled": true,
+      "settings": {
+      }
+    }
+  },
+  "order": [
+    "popup"
+  ]
+}

@@ -1,0 +1,91 @@
+{% liquid
+  if nav.settings.mega_nav_featured_image != blank
+    assign show_images = true
+  endif
+%}
+
+<nav
+  class="mega-nav-legacy"
+  data-mega-nav-legacy
+  data-show-images="{{ show_images }}"
+  data-id="{{ nav.id }}"
+  {{ nav.shopify_attributes }}
+>
+  <div class="mega-nav-legacy__overlay" data-overlay></div>
+
+  <div class="mega-nav-legacy__container">
+    <ul class="mega-nav-legacy__list">
+      <li class="mega-nav-legacy__heading">
+        <a href="{{ link.url }}">{{ link.title }}</a>
+      </li>
+      {%- for link in link.links -%}
+        {%- assign has_children = false -%}
+        {%- if link.links.size > 0 -%}
+          {%- assign has_children = true -%}
+        {%- endif -%}
+        <li class="mega-nav-legacy__item">
+          <a
+            href="{{ link.url }}"
+            class="
+              {% if link.active %}active{% endif %}
+              {% if has_children %}no-transition{% endif %}
+            "
+            {% if has_children %}
+              data-trigger="{{ link.handle }}"
+            {% endif %}
+            {% if link.type == 'collection_link' %}
+              data-collection="{{ link.object.handle }}"
+            {% endif %}
+          >
+            <span>{{ link.title }}</span>
+            {% if has_children %}
+              {% render 'icon' with icon: 'arrow-drop-down' %}
+            {% endif %}
+          </a>
+        </li>
+      {%- endfor -%}
+    </ul>
+
+    {%- for link in link.links -%}
+      {%- assign has_children = false -%}
+      {%- if link.links.size > 0 -%}
+        {%- assign has_children = true -%}
+      {%- endif -%}
+
+      {%- if has_children -%}
+        <ul class="mega-nav-legacy__list" data-depth="1" data-submenu="{{ link.handle }}" hidden>
+          <li class="mega-nav-legacy__heading">
+            <a href="{{ link.url }}">{{ link.title }}</a>
+          </li>
+          {%- for link in link.links -%}
+            <li class="mega-nav-legacy__item">
+              <a href="{{ link.url }}" class="{% if link.active %}active{% endif %}">
+                <span>{{ link.title }}</span>
+              </a>
+            </li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+    {%- endfor -%}
+
+    {%- if show_images -%}
+      <div class="mega-nav-legacy__image visible" data-image>
+        {% render 'image',
+          image: nav.settings.mega_nav_featured_image,
+          id: 'mega-nav-legacy-image',
+          disable_style: true,
+          focal_point: 'image_presentation'
+        %}
+
+        {%- for link in link.links -%}
+          {%- if link.type == 'collection_link' -%}
+            {%- assign collection = link.object -%}
+            {%- if collection.image != blank -%}
+              {% render 'image', image: collection.image, id: collection.handle, disable_style: true %}
+            {%- endif -%}
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+</nav>

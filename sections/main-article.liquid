@@ -1,0 +1,255 @@
+{% liquid
+  assign show_share = section.settings.show_share
+  assign show_pagination = section.settings.show_pagination
+
+  if comment.status == 'pending'
+    assign number_of_comments = article.comments_count | plus: 1
+  else
+    assign number_of_comments = article.comments_count
+  endif
+%}
+
+<article class="article">
+  {%- for block in section.blocks -%}
+    {%- case block.type -%}
+      {%- when 'title' -%}
+        <header class="article__header">
+          <p class="article__date ff-meta fs-meta c-meta">{{ article.published_at | time_tag: format: 'date' }}</p>
+          <h1 class="ff-heading fs-page-heading c-heading">{{ article.title }}</h1>
+          {%- if show_share -%}
+            <div class="article__share">
+              {% render 'share-block' with
+                url: article.url,
+                title: article.title,
+                image: article.image
+              %}
+            </div>
+          {%- endif -%}
+        </header>
+      {%- when 'featured_image' -%}
+        {%- if article.image != blank -%}
+          <div class="article__image borders">
+            {% render 'image' with image: article.image %}
+          </div>
+        {%- endif -%}
+      {%- when 'content'-%}
+        <div class="article__content fs-body-large">
+          <div class="article__rte rte rte--article">{{ article.content }}</div>
+      
+          {%- if article.tags.size > 0 -%}
+            <ul class="article__tags fs-body-base">
+              <li>{{ 'blogs.article.tags' | t }}:</li>
+              {% for tag in article.tags %}
+                <li class="article__tag">{{ tag | link_to_tag: tag }}</li>
+              {% endfor %}
+            </ul>
+          {%- endif -%}
+      
+          {%- if show_share -%}
+            <div class="article__share-bottom">
+              {% render 'share-block' with
+                url: article.url,
+                title: article.title,
+                image: article.image
+              %}
+            </div>
+          {%- endif -%}
+      
+          {%- if show_pagination -%}
+            {%- if blog.previous_article or blog.next_article -%}
+              <div class="article__pagination ff-body fs-body-base">
+                {% if blog.previous_article %}
+                  <a href="{{ blog.previous_article }}" class="article__pagination-prev link">
+                    {{ 'blogs.article.pagination.previous' | t }}
+                  </a>
+                {% endif %}
+                {% if blog.next_article %}
+                  <a href="{{ blog.next_article }}" class="article__pagination-next link">
+                    {{ 'blogs.article.pagination.next' | t }}
+                  </a>
+                {% endif %}
+              </div>
+            {%- endif -%}
+          {%- endif -%}
+      
+        </div>
+    {%- endcase -%}
+  {%- endfor -%}
+
+{% if blog.comments_enabled? %}
+<div class="article__comments">
+  {% if number_of_comments > 0 %}
+    <h2 class="comments__heading ff-heading fs-heading-small c-heading">{{ 'blogs.comments.comments_with_count' | t: count: number_of_comments }}</h2>
+
+    {% paginate article.comments by 10 %}
+
+      {% comment %}
+        #comments is required, it is used as an anchor link by Shopify.
+      {% endcomment %}
+      <div id="comments">
+        <ul class="comments">
+          {% comment %}
+            If a comment was just submitted with no blank field, show it.
+          {% endcomment %}
+          {% if comment.status == 'pending' %}
+            <li id="{{ comment.id }}" class="comment">
+              {% render 'comment', comment: comment %}
+            </li>
+          {% endif %}
+
+          {% for comment in article.comments %}
+            <li id="{{ comment.id }}" class="comment">
+              {% render 'comment', comment: comment %}
+            </li>
+          {% endfor %}
+        </ul>
+
+        {%- if paginate.pages > 1 -%}
+          {% render 'pagination', paginate: paginate %}
+        {%- endif -%}
+
+      </div>
+    {% endpaginate %}
+  {% endif %}
+
+  {% form 'new_comment', article %}
+
+    {%- assign formId = 'CommentForm' -%}
+
+    <h2 class="comments__leave-heading ff-heading fs-heading-small c-heading">{{ 'blogs.comments.title' | t }}</h2>
+
+    {%- assign post_message = 'blogs.comments.success' -%}
+    {%- if blog.moderated? and comment.status == 'pending' -%}
+      {%- assign post_message = 'blogs.comments.success_moderated' -%}
+    {%- elsif comment.status == 'unapproved' or comment.status == 'spam' -%}
+      {%- assign post_message = 'blogs.comments.unapproved' -%}
+    {%- endif -%}
+
+    {% render 'form-status', form: form, form_id: formId, success_message: post_message %}
+
+    <div>
+
+      <div class="input-control">
+        <label for="{{ formId }}-author" class="visually-hidden">{{ 'blogs.comments.name' | t }}</label>
+        <input
+          type="text"
+          name="comment[author]"
+          placeholder="{{ 'blogs.comments.name' | t }}"
+          id="{{ formId }}-author"
+          class="input"
+        >
+      </div>
+
+      <div class="input-control">
+        <label for="{{ formId }}-email" class="visually-hidden">{{ 'blogs.comments.email' | t }}</label>
+        <input
+          type="email"
+          name="comment[email]"
+          placeholder="{{ 'blogs.comments.email' | t }}"
+          id="{{ formId }}-email"
+          class="input"
+        >
+      </div>
+
+      <div class="input-control">
+        <label for="{{ formId }}-body" class="visually-hidden">{{ 'blogs.comments.message' | t }}</label>
+        <textarea
+          name="comment[body]"
+          placeholder="{{ 'blogs.comments.message' | t }}"
+          id="{{ formId }}-body"
+          class="input"
+        >
+          {{- form.body -}}
+        </textarea>
+      </div>
+    </div>
+
+    {% if blog.moderated? %}
+      <p class="comments__mod-message ff-body fs-body-base">{{ 'blogs.comments.moderated' | t }}</p>
+    {% endif %}
+
+    <button type="submit" class="comments__submit btn btn--primary">{{ 'blogs.comments.post' | t }}</button>
+  {% endform %}
+
+</div>
+{% endif %}
+
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "Article",
+    "articleBody": {{ article.content | strip_html | json }},
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": {{ shop.url | append: page.url | json }}
+    },
+    "headline": {{ article.title | json }},
+    {% if article.excerpt != blank %}
+      "description": {{ article.excerpt | strip_html | json }},
+    {% endif %}
+    {% if article.image %}
+      {% assign image_size = article.image.width | append: 'x' %}
+      "image": [
+        {{ article | img_url: image_size | prepend: "https:" | json }}
+      ],
+    {% endif %}
+    "datePublished": {{ article.published_at | date: '%Y-%m-%dT%H:%M:%SZ' | json }},
+    "dateCreated": {{ article.created_at | date: '%Y-%m-%dT%H:%M:%SZ' | json }},
+    "author": {
+      "@type": "Person",
+      "name": {{ article.author | json }}
+    },
+    "publisher": {
+      "@type": "Organization",
+      {% if settings.share_image %}
+        {% assign image_size = settings.share_image.width | append: 'x' %}
+        "logo": {
+          "@type": "ImageObject",
+          "height": {{ settings.share_image.height | json }},
+          "url": {{ settings.share_image | img_url: image_size | prepend: "https:" | json }},
+          "width": {{ settings.share_image.width | json }}
+        },
+      {% endif %}
+      "name": {{ shop.name | json }}
+    }
+  }
+</script>
+
+
+{% schema %}
+  {
+    "name": "t:sections.main_article.name",
+    "class": "page-section template--article",
+    "settings": [
+      {
+        "id": "show_share",
+        "type": "checkbox",
+        "label": "t:sections.main_article.settings.show_share.label",
+        "default": true
+      },
+      {
+        "id": "show_pagination",
+        "type": "checkbox",
+        "label": "t:sections.main_article.settings.show_pagination.label",
+        "default": true
+      }
+    ],
+    "blocks": [
+      {
+        "type": "title",
+        "name": "t:sections.main_article.blocks.title.name",
+        "limit": 1
+      },
+      {
+        "type": "featured_image",
+        "name": "t:sections.main_article.blocks.featured_image.name",
+        "limit": 1
+      },
+      {
+        "type": "content",
+        "name": "t:sections.main_article.blocks.content.name",
+        "limit": 1
+      } 
+    ]
+  }
+{% endschema %}

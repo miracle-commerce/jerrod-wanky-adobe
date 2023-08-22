@@ -1,0 +1,117 @@
+<section
+  class="rich-text s-inline-section"
+  data-section-id="{{ section.id }}"
+  data-section-type="rich-text"
+  style="--s-max-width: {{ section.settings.max_width }}em;"
+>
+  <div class="rich-text__content rich-text__content--{{ section.settings.alignment }}">
+    {%- for block in section.blocks -%}
+      {%- case block.type -%}
+        {%- when 'heading' -%}
+          {%- unless block.settings.heading_title == blank -%}
+            <h3 class="rich-text__heading ff-heading fs-page-heading c-heading">{{ block.settings.heading_title }}</h3>
+          {%- endunless -%}
+
+        {%- when 'text' -%}
+          {%- unless block.settings.text == blank -%}
+            <div class="rich-text__body rte ff-body fs-primary-body c-subheading">{{ block.settings.text }}</div>
+          {%- endunless -%}
+
+        {%- when 'button' -%}
+          {%- if block.settings.link and block.settings.link_text -%}
+            <a class="btn btn--primary" href="{{ block.settings.link }}">{{ block.settings.link_text }}</a>
+          {%- endif -%}
+      {%- endcase -%}
+    {%- endfor -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "t:sections.rich_text.name",
+  "class": "inline-section",
+  "disabled_on": {
+    "groups": ["header", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "id": "alignment",
+      "type": "select",
+      "label": "t:sections.rich_text.settings.alignment.label",
+      "options": [
+        { "label": "t:sections.rich_text.settings.alignment.options.left", "value": "left" },
+        { "label": "t:sections.rich_text.settings.alignment.options.center", "value": "center" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "t:sections.rich_text.blocks.heading.settings.max_width.label",
+      "min": 24,
+      "max": 48,
+      "step": 1,
+      "default": 42
+    }
+  ],
+  "blocks": [
+    {
+      "type": "heading",
+      "name": "t:sections.rich_text.blocks.heading.name",
+      "limit": 1,
+      "settings": [
+        {
+          "id": "heading_title",
+          "type": "text",
+          "label": "t:sections.rich_text.blocks.heading.settings.section_heading.label",
+          "default": "Rich text"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "t:sections.rich_text.blocks.text.name",
+      "limit": 1,
+      "settings": [
+        {
+          "id": "text",
+          "type": "richtext",
+          "label": "t:sections.rich_text.blocks.text.settings.text.label",
+          "default": "<p>Use this text area to share information about your brand with your customers. Describe a product, share announcements, or welcome customers to your store.</p>"
+        }
+      ]
+    },
+    {
+      "type": "button",
+      "name": "t:sections.rich_text.blocks.button.name",
+      "limit": 1,
+      "settings": [
+        {
+          "id": "link",
+          "type": "url",
+          "label": "t:sections.rich_text.blocks.button.settings.link.label"
+        },
+        {
+          "id": "link_text",
+          "type": "text",
+          "label": "t:sections.rich_text.blocks.button.settings.link_text.label",
+          "default": "Read more"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.rich_text.presets.name",
+      "blocks": [
+        {
+          "type": "heading"
+        },
+        {
+          "type": "text"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

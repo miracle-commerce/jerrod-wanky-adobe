@@ -1,0 +1,48 @@
+{%- assign max_products = per_row | times: rows -%}
+{%- assign total_products = collection.products | size -%}
+
+<section
+  class="featured-collection s-inline-section"
+  data-section-id="{{ section.id }}"
+  data-section-type="featured-collection"
+>
+  {% render 'section-header', heading: heading, url: collection.url %}
+
+  <div class="featured-collection__wrapper">
+    <div class="grid" data-slider>
+      {%- if collection != blank -%}
+        {%- for product in collection.products limit: max_products -%}
+          <div class="grid__item grid__item--{{ per_row }}" data-slide>
+            {%
+              render 'product-item' with
+              product: product,
+              aspect_ratio: aspect_ratio
+            %}
+          </div>
+        {%- endfor -%}
+      {%- else -%}
+        {% for i in (1..max_products) %}
+          {% capture current %}{% cycle 1, 2, 3, 4, 5, 6 %}{% endcapture %}
+          <div class="grid__item grid__item--{{ per_row }}" data-slide>
+            <div class="product-item product-item--{{ aspect_ratio }}">
+              <div class="product-item__media borders">
+                <div class="product-item__image placeholder-image">
+                  {{ 'product-' | append: current | placeholder_svg_tag: 'placeholder-svg' }}
+                </div>
+              </div>
+              <div class="product-item__text fs-body-base">
+                <h4>{{ 'homepage.onboarding.product_title' | t }}</h4>
+                <span>
+                  {{- 1999 | money -}}
+                  {%- if settings.currency_code_enabled %} {{ cart.currency.iso_code }}{% endif -%}
+                </span>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      {%- endif -%}
+
+      {% render 'carousel-pagination' %}
+    </div>
+  </div>
+</section>

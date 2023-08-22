@@ -1,0 +1,24 @@
+{% if image.preview_image %}
+  {%- assign image = image.preview_image -%}{%- comment -%} hack - nicer way? {%- endcomment -%}
+{% endif %}
+{%- assign height = image.height | times: 1.0 | default: 1.0 -%}
+{%- assign width = image.width | times: 1.0 | default: 1.0 -%}
+{%- assign padding_top = height | divided_by: width | times: 100 | append: "%" -%}
+
+{%- if id == blank -%}
+  {%- assign id = image.id -%}
+{%- endif -%}
+
+<div
+  class="image image--{{ id }} image--responsive {{ wrapper_class }}"
+  {% unless disable_style %}
+    style="padding-top: {{ padding_top }}"
+  {% endunless %}
+>
+  {% render 'responsive-image' with
+    image: image,
+    sizes: sizes,
+    prioritizeLoading: prioritizeLoading
+  %}
+</div>
+

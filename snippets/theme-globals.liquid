@@ -1,0 +1,29 @@
+{%- if template contains 'customers' -%}
+  <script src="{{ 'shopify_common.js' | shopify_asset_url }}" defer="defer"></script>
+{%- endif -%}
+
+<script>
+  flu = window.flu || {};
+  flu.chunks = {
+    flickity: "{{ 'flickity-chunk.js' | asset_url }}",
+  };
+</script>
+
+{% # Set the following line to false to use the minified javascript file theme.min.js %}
+{% assign useUnminifiedThemeJS = false %}
+
+{% if useUnminifiedThemeJS %}
+  <script type="module" src="{{ 'theme.js' | asset_url }}"></script>
+{% else %}
+  <script type="module" src="{{ 'theme.min.js' | asset_url }}"></script>
+{% endif %}
+
+{% # Set the following line to true to import custom-events.js %}
+{% assign useCustomEvents = false %}
+
+{% if useCustomEvents %}
+  <script src="{{ 'custom-events.js' | asset_url }}"></script>
+{% endif %}
+
+{{ 'theme.css' | asset_url | stylesheet_tag }}
+{{ 'custom.css' | asset_url | stylesheet_tag }}

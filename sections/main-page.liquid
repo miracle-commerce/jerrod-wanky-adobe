@@ -1,0 +1,49 @@
+<section
+  class="page {% if section.settings.enable_full_width %}full-width{% endif %}"
+  data-section-id="{{ section.id }}"
+  data-section-type="page"
+>
+  <header class="page__header">
+    <h1 class="page__heading ff-heading c-heading">{{ page.title }}</h1>
+    {% if intro != blank %}
+      <p class="page__intro">{{ intro }}</p>
+    {% endif %}
+  </header>
+
+  {%- if blocks.size > 0 -%}
+    <div class="about__grid about__grid--{{ blocks.size }}">
+      {%- for block in section.blocks -%}
+        <div class="about__block about__block--{{ forloop.index }}">
+
+          {%- if block.settings.image == blank and block.settings.video_url == blank -%}
+            <div class="placeholder-image">
+              {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+            </div>
+          {%- endif -%}
+
+          {%- if block.settings.image != blank -%}
+            {% render 'image' with
+              image: block.settings.image,
+              disable_style: true
+            %}
+          {%- endif -%}
+
+          {% if block.settings.video_url != blank %}
+            <video class="about__block-video" autoplay playsinline loop muted src="{{ block.settings.video_url }}"></video>
+          {% endif %}
+        </div>
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
+
+  <div class="page__rte ff-body rte rte--page">
+    {{ page.content }}
+  </div>
+</section>
+{% schema %}
+  {
+    "name": "t:sections.main_page.name",
+    "tag": "section",
+    "class": "page-section"
+  }
+{% endschema %}

@@ -1,0 +1,182 @@
+{% assign settings = section.settings %}
+
+<section
+  class="text-columns-with-images s-inline-section"
+  data-section-id="{{ section.id }}"
+  data-section-type="text-columns-with-images"
+>
+  {% render 'section-header' %}
+
+  <div
+    class="text-columns-with-images__columns mobile-carousel"
+    style="--s-image-max-width: {{ settings.image_max_width }}px"
+    data-slider
+  >
+    {%- for column in section.blocks -%}
+      <div
+        class="text-columns-with-images__column text-columns-with-images__column--{{ settings.per_row }}"
+        data-slide
+        data-index="{{ forloop.index0 }}"
+        {{ column.shopify_attributes }}
+      >
+        <div class="text-columns-with-images__inner">
+          {%- if column.settings.image != blank -%}
+            <div class="text-columns-with-images__image-wrap {% if settings.circle %}is-circle{% endif %}">
+              <div>
+                {% render 'image', image: column.settings.image, focal_point: 'image_presentation' %}
+              </div>
+            </div>
+          {%- endif -%}
+          {%- if column.settings.title -%}
+            <h5 class="text-columns-with-images__heading ff-heading fs-heading-small c-heading">
+              {{ column.settings.title }}
+            </h5>
+          {%- endif -%}
+          {%- if column.settings.text -%}
+            <div class="text-columns-with-images__text fs-body-base">{{ column.settings.text }}</div>
+          {%- endif -%}
+          {%- if column.settings.link != blank and column.settings.link_text != blank -%}
+            <a class="link fs-body-base" href="{{ column.settings.link }}">{{ column.settings.link_text }}</a>
+          {%- endif -%}
+        </div>
+      </div>
+    {%- else -%}
+      {% comment %} Placeholder content {% endcomment %}
+      {%- assign headings = 'Heading|Heading|Heading' | split: '|' -%}
+      {%- assign text = 'Start here. Introduce your vision, or explain why what you do or sell is superior to your competitors.|
+        Get into your process a bit. The quality of handiwork, proprietary knowledge, or materials that you use that make your products better.|
+        End it with an action item that the user can take advantage of. Link to a more in-depth page, or go straight to a collection. Your call.'
+        | split: '|'
+      -%}
+
+      {%- for placeholder in headings -%}
+        <div
+          class="text-columns-with-images__column text-columns-with-images__column--{{ settings.per_row }}"
+          data-slide
+        >
+          <div class="text-columns-with-images__inner">
+            <div class="text-columns-with-images__image-wrap {% if settings.circle %}is-circle{% endif %}">
+              <div class="text-columns-with-images__placeholder placeholder-image">
+                {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+              </div>
+            </div>
+            <h5 class="text-columns-with-images__heading ff-heading fs-heading-small c-heading">
+              {{ headings[forloop.index0] }}
+            </h5>
+            <div class="text-columns-with-images__text fs-body-base">{{ text[forloop.index0] }}</div>
+            <a class="link fs-body-base" href="#">Learn more →</a>
+          </div>
+        </div>
+      {%- endfor -%}
+    {%- endfor -%}
+
+    {% render 'carousel-pagination' %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Text columns with images",
+  "class": "inline-section",
+  "disabled_on": {
+    "groups": ["header", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "id": "per_row",
+      "type": "range",
+      "label": "t:sections.text_columns_with_images.settings.per_row.label",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "id": "image_max_width",
+      "type": "range",
+      "label": "t:sections.text_columns_with_images.settings.image_max_width.label",
+      "min": 50,
+      "max": 200,
+      "step": 10,
+      "unit": "px",
+      "default": 100
+    },
+    {
+      "id": "circle",
+      "type": "checkbox",
+      "label": "t:sections.text_columns_with_images.settings.circle.label",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "column",
+      "name": "t:sections.text_columns_with_images.blocks.name",
+      "settings": [
+        {
+          "id": "image",
+          "type": "image_picker",
+          "label": "t:sections.text_columns_with_images.blocks.settings.image.label"
+        },
+        {
+          "id": "title",
+          "type": "text",
+          "label": "t:sections.text_columns_with_images.blocks.settings.title.label",
+          "default": "Heading"
+        },
+        {
+          "id": "text",
+          "type": "richtext",
+          "label": "t:sections.text_columns_with_images.blocks.settings.text.label",
+          "default": "<p>Introduce your vision, or explain why what you do or sell is superior to your competitors.</p>"
+        },
+        {
+          "id": "link",
+          "type": "url",
+          "label": "t:sections.text_columns_with_images.blocks.settings.link.label"
+        },
+        {
+          "id": "link_text",
+          "type": "text",
+          "label": "t:sections.text_columns_with_images.blocks.settings.link_text.label"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.text_columns_with_images.presets.name",
+      "category": "Text",
+      "blocks": [
+        {
+          "type": "column",
+          "settings": {
+            "title": "Heading",
+            "text": "<p>Introduce your vision, or explain why what you do or sell is superior to your competitors.</p>",
+            "link": "#",
+            "link_text": "Link text"
+          }
+        },
+        {
+          "type": "column",
+          "settings": {
+            "title": "Heading",
+            "text": "<p>Introduce your vision, or explain why what you do or sell is superior to your competitors.</p>",
+            "link": "#",
+            "link_text": "Link text"
+          }
+        },
+        {
+          "type": "column",
+          "settings": {
+            "title": "Heading",
+            "text": "<p>Introduce your vision, or explain why what you do or sell is superior to your competitors.</p>",
+            "link": "#",
+            "link_text": "Link text"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

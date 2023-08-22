@@ -1,0 +1,92 @@
+{
+  "type": "header",
+  "name": "t:groups.header_group.name",
+  "sections": {
+    "announcement-bar": {
+      "type": "announcement-bar",
+      "disabled": true,
+      "blocks": {
+        "announcement-0": {
+          "type": "announcement",
+          "settings": {
+            "title": "Announce a sale or a new product line using this announcement bar.",
+            "link": "",
+            "color_background": "#19685f",
+            "color_text": "#ffffff"
+          }
+        },
+        "announcement-1": {
+          "type": "announcement",
+          "settings": {
+            "title": "Announce a sale or a new product line using this announcement bar.",
+            "link": "",
+            "color_background": "#1d1d1d",
+            "color_text": "#ffffff"
+          }
+        }
+      },
+      "block_order": [
+        "announcement-0",
+        "announcement-1"
+      ],
+      "settings": {
+        "timing": 3
+      }
+    },
+    "header": {
+      "type": "header",
+      "blocks": {
+        "0af30fcd-0159-4872-bb1d-08d2a3f753fd": {
+          "type": "mega_nav_5_col",
+          "settings": {
+            "dropdown_parent_link": "Main menu",
+            "featured_image_caption": "",
+            "featured_image_link": "",
+            "featured_image_link_title": "",
+            "featured_image_aspect_ratio": "portrait",
+            "focal_point": "image_presentation"
+          }
+        },
+        "c154eb18-f66c-43a4-b87b-4f4688433e5b": {
+          "type": "mega_nav_legacy",
+          "settings": {
+            "dropdown_parent_link": ""
+          }
+        },
+        "08dea72f-19e7-4ecd-81cf-3c418ba84a9b": {
+          "type": "mega_nav_5_col",
+          "disabled": true,
+          "settings": {
+            "dropdown_parent_link": "",
+            "featured_image_caption": "",
+            "featured_image_link": "",
+            "featured_image_link_title": "",
+            "featured_image_aspect_ratio": "portrait",
+            "focal_point": "image_presentation"
+          }
+        }
+      },
+      "block_order": [
+        "0af30fcd-0159-4872-bb1d-08d2a3f753fd",
+        "c154eb18-f66c-43a4-b87b-4f4688433e5b",
+        "08dea72f-19e7-4ecd-81cf-3c418ba84a9b"
+      ],
+      "settings": {
+        "logo_max_width": 50,
+        "menu": "main-menu",
+        "style": "inline",
+        "logo_position": "center",
+        "enable_transparent_home": true,
+        "enable_transparent_collection": true,
+        "color_text_transparent": "#000000",
+        "color_icon_transparent": "#000000",
+        "color_border_transparent": "#ffffff",
+        "opacity_border_transparent": 0
+      }
+    }
+  },
+  "order": [
+    "announcement-bar",
+    "header"
+  ]
+}

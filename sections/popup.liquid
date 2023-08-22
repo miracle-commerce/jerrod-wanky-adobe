@@ -1,0 +1,313 @@
+{%- if section.blocks.size > 0 -%}
+  <div
+    data-section-id="{{ section.id }}"
+    data-section-type="popup"
+    class="popups"
+  >
+    {%- for block in section.blocks -%}
+      {% liquid
+        assign brightness_input_background = block.settings.color_background_input | color_brightness
+        if brightness_input_background > 127
+          assign color_background_button_hover = block.settings.color_background_input | color_darken: 10
+        else
+          assign color_background_button_hover = block.settings.color_background_input | color_lighten: 10
+        endif
+
+        assign focal_point = block.settings.image_position
+
+        if focal_point == 'image_presentation' and block.settings.image.presentation.focal_point == '50.0% 50.0%'
+          assign focal_point = 'center'
+        endif
+
+        if focal_point
+          if focal_point == 'image_presentation'
+            assign focal_alignment = block.settings.image.presentation.focal_point
+          else
+            assign focal_alignment = focal_point | replace: '_', ' '
+          endif
+        endif
+      %}
+      <section
+        class="
+          popup
+          popup--{{ block.type }}
+        "
+        data-popup
+        data-id="{{ block.id }}"
+        data-popup-type="{{ block.type }}"
+        data-timeout="{% if block.type == 'age_popup' %}0{% else %}10000{% endif %}"
+        style="
+          --image-position: {{ focal_alignment }};
+          --image-opacity: {{ block.settings.image_opacity | divided_by: 100.0}};
+          --color-background: {{ block.settings.color_background }};
+          {% if block.settings.color_background_gradient != blank %}
+            --gradient-background: {{ block.settings.color_background_gradient }};
+          {% endif %}
+          --color-background-input: {{ block.settings.color_background_input }};
+          --color-background-input-hover: {{ color_background_button_hover }};
+          --color-text: {{ block.settings.color_text }};
+          --color-text-input: {{ block.settings.color_text_input }};
+        "
+        {{ block.shopify_attributes }}
+      >
+        <div class="popup__overlay" data-overlay></div>
+        <div class="popup__bar">
+          {%- if block.settings.image != blank -%}
+            {%
+              render 'nativeImage' with
+              image: block.settings.image,
+              id: 'popup',
+              wrapper_class: 'popup__image',
+              disable_style: true,
+              sizes: "100vw"
+            %}
+          {%- endif -%}
+
+          {%- unless block.type == 'age_popup' -%}
+            <a href="#" data-close class="popup__close" title="Close">{% render 'icon' with icon: 'close' %}</a>
+          {%- endunless -%}
+
+          <div class="popup__content">
+            {%- if block.settings.title != blank -%}
+              <h3 class="popup__heading ff-heading">{{ block.settings.title }}</h3>
+            {%- endif -%}
+            {%- if block.settings.subheading != blank -%}
+              <div class="popup__subheading ff-body">{{ block.settings.subheading }}</div>
+            {%- endif -%}
+
+            {%- unless block.type == 'age_popup' -%}
+              <div class="popup__form">
+                {% render 'newsletter-form' with id: 'popup' %}
+              </div>
+            {%- endunless -%}
+
+            {%- if block.type == 'age_popup' -%}
+              {%- liquid
+                assign brightness_button = block.settings.color_background_button | color_brightness
+                if brightness_button > 60
+                  assign color_background_button_hover = block.settings.color_background_button | color_darken: 20
+                else
+                  assign color_background_button_hover = block.settings.color_background_button | color_lighten: 20
+                endif
+              -%}
+              <div
+                class="popup__verify-age-buttons"
+                style="
+                  --color-text-button: {{ block.settings.color_text_button }};
+                  --color-background-button: {{ block.settings.color_background_button }};
+                  --color-background-button-hover : {{ color_background_button_hover }};
+                "
+              >
+                <button class="btn btn--primary btn--full popup__verify-age" data-verify-age>
+                  {{ block.settings.verify_button_text }}
+                </button>
+                <a
+                  href="{{ block.settings.decline_age_link | default: "/password" }}"
+                  class="ff-body fs-body-base link popup__decline-age"
+                >
+                  {{ block.settings.decline_age_text }}
+                </a>
+              </div>
+            {%- endif -%}
+
+            {%- unless block.settings.footer_text == blank -%}
+              <div class="popup__footer-text ff-body fs-body-small">
+                {{ block.settings.footer_text }}
+              </div>
+            {%- endunless -%}
+          </div>
+        </div>
+      </section>
+    {%- endfor -%}
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "t:sections.popup.name",
+  "blocks": [
+    {
+      "type": "age_popup",
+      "name": "t:sections.popup.blocks.age_popup.name",
+      "limit": 1,
+      "settings": [
+        {
+          "id": "image",
+          "type": "image_picker",
+          "label": "t:sections.popup.blocks.shared.settings.image.label"
+        },
+        {
+          "id": "image_position",
+          "type": "select",
+          "label": "t:sections.popup.blocks.shared.settings.image_position.label",
+          "options": [
+            { "label": "t:shared.focal_point.options.image_presentation", "value": "image_presentation" },
+            { "label": "t:sections.popup.blocks.shared.settings.image_position.options.top", "value": "top" },
+            { "label": "t:sections.popup.blocks.shared.settings.image_position.options.center", "value": "center" },
+            { "label": "t:sections.popup.blocks.shared.settings.image_position.options.bottom", "value": "bottom" }
+          ],
+          "default": "image_presentation"
+        },
+        {
+          "id": "image_opacity",
+          "type": "range",
+          "label": "t:sections.popup.blocks.shared.settings.image_opacity.label",
+          "min": 0,
+          "max": 100,
+          "step": 5,
+          "default": 50,
+          "unit": "%"
+        },
+        {
+          "id": "title",
+          "type": "text",
+          "label": "t:sections.popup.blocks.shared.settings.title.label",
+          "default": "Please verify your age"
+        },
+        {
+          "id": "subheading",
+          "type": "textarea",
+          "label": "t:sections.popup.blocks.shared.settings.subheading.label",
+          "default": "You must be 19 years of age or older to enter."
+        },
+        {
+          "id": "verify_button_text",
+          "type": "text",
+          "label": "t:sections.popup.blocks.age_popup.settings.verify_button_text.label",
+          "default": "Enter"
+        },
+        {
+          "id": "decline_age_link",
+          "type": "url",
+          "label": "t:sections.popup.blocks.age_popup.settings.decline_age_link.label",
+          "info": "t:sections.popup.blocks.age_popup.settings.decline_age_link.info"
+        },
+        {
+          "type": "text",
+          "id": "decline_age_text",
+          "label": "t:sections.popup.blocks.age_popup.settings.decline_age_text.label",
+          "default": "Exit"
+        },
+        {
+          "type": "richtext",
+          "id": "footer_text",
+          "label": "t:sections.popup.blocks.age_popup.settings.footer_text.label",
+          "default": "<p>By entering you are agreeing that you are at least 19 years of age or older.</p>"
+        },
+        {
+          "type": "header",
+          "content": "t:sections.popup.blocks.shared.settings.header_style"
+        },
+        {
+          "id": "color_background",
+          "type": "color",
+          "label": "t:sections.popup.blocks.shared.settings.color_background.label",
+          "default": "#000000"
+        },
+        {
+          "id": "color_background_gradient",
+          "type": "color_background",
+          "label": "t:shared.color.color_background_gradient.label"
+        },
+        {
+          "id": "color_text",
+          "type": "color",
+          "label": "t:sections.popup.blocks.shared.settings.color_text.label",
+          "default": "#ffffff"
+        },
+        {
+          "id": "color_text_button",
+          "type": "color",
+          "label": "t:sections.popup.blocks.shared.settings.color_text_button.label",
+          "default": "#1C2232"
+        },
+        {
+          "id": "color_background_button",
+          "type": "color",
+          "label": "t:sections.popup.blocks.shared.settings.color_background_button.label",
+          "default": "#ffffff"
+        }
+      ]
+    },
+    {
+      "type": "popup",
+      "name": "t:sections.popup.blocks.popup.name",
+      "limit": 1,
+      "settings": [
+        {
+          "id": "image",
+          "type": "image_picker",
+          "label": "t:sections.popup.blocks.shared.settings.image.label"
+        },
+        {
+          "id": "image_position",
+          "type": "select",
+          "label": "t:sections.popup.blocks.shared.settings.image_position.label",
+          "options": [
+            { "label": "t:shared.focal_point.options.image_presentation", "value": "image_presentation" },
+            { "label": "t:sections.popup.blocks.shared.settings.image_position.options.top", "value": "top" },
+            { "label": "t:sections.popup.blocks.shared.settings.image_position.options.center", "value": "center" },
+            { "label": "t:sections.popup.blocks.shared.settings.image_position.options.bottom", "value": "bottom" }
+          ],
+          "default": "image_presentation"
+        },
+        {
+          "id": "image_opacity",
+          "type": "range",
+          "label": "t:sections.popup.blocks.shared.settings.image_opacity.label",
+          "min": 0,
+          "max": 100,
+          "step": 5,
+          "default": 50,
+          "unit": "%"
+        },
+        {
+          "id": "title",
+          "type": "text",
+          "label": "t:sections.popup.blocks.shared.settings.title.label",
+          "default": "Sign up for our newsletter"
+        },
+        {
+          "id": "subheading",
+          "type": "textarea",
+          "label": "t:sections.popup.blocks.shared.settings.subheading.label",
+          "default": "We only send emails once or twice a month and only about good things."
+        },
+        {
+          "type": "header",
+          "content": "t:sections.popup.blocks.shared.settings.header_style"
+        },
+        {
+          "id": "color_background",
+          "type": "color",
+          "label": "t:sections.popup.blocks.shared.settings.color_background.label",
+          "default": "#000000"
+        },
+        {
+          "id": "color_background_gradient",
+          "type": "color_background",
+          "label": "t:shared.color.color_background_gradient.label"
+        },
+        {
+          "id": "color_text",
+          "type": "color",
+          "label": "t:sections.popup.blocks.shared.settings.color_text.label",
+          "default": "#ffffff"
+        },
+        {
+          "id": "color_background_input",
+          "type": "color",
+          "label": "t:sections.popup.blocks.shared.settings.color_background_input.label",
+          "default": "#ffffff"
+        },
+        {
+          "id": "color_text_input",
+          "type": "color",
+          "label": "t:sections.popup.blocks.shared.settings.color_text_input.label",
+          "default": "#1d1d1d"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

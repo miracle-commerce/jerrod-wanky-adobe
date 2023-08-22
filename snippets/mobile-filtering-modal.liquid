@@ -1,0 +1,174 @@
+{% capture footer_markup %}
+  <div class="collection-modal__footer">
+    <button class="btn" data-button="clear">{{ 'filters.clear' | t }}</button>
+    <button class="btn btn--primary" data-button="apply">{{ 'filters.apply' | t }}</button>
+  </div>
+{% endcapture %}
+
+<form data-filter-form>
+  {% if results.filters %}
+    {%- comment -%} Keep product type within form {%- endcomment -%}
+    {%- if results.current_type -%}
+      <input type="hidden" name="q" value="{{ results.current_type | escape }}">
+    {%- endif -%}
+
+    {%- comment -%} Keep product vendor within form {%- endcomment -%}
+    {%- if results.current_vendor -%}
+      <input type="hidden" name="q" value="{{ results.current_vendor | escape }}">
+    {%- endif -%}
+
+    {% for filter in results.filters %}
+      {% comment %} Share this loop with the mobile filter modals {% endcomment %}
+      <div class="collection-modal" data-mobile-modal="{{ filter.label | handleize }}">
+        <div class="collection-modal__heading">
+          <div class="ff-heading fs-heading-base">{{ filter.label }}</div>
+          <div data-close-icon>
+            {% render 'icon' with icon: 'close' %}
+          </div>
+        </div>
+        <div class="collection-modal__content" data-scroll-lock-ignore>
+          <div>
+            {%- case filter.type -%}
+              {%- when 'boolean', 'list' -%}
+                {%- liquid
+                  assign group_name = filter.label | handleize
+                  assign list_modifiers = ''
+                  if swatch_options contains group_name or chip_options contains group_name
+                    assign list_modifiers = list_modifiers | append: ' is-flex'
+                  endif
+                  if swatch_options contains group_name
+                    assign list_modifiers = list_modifiers | append: ' has-swatch'
+                  elsif chip_options contains group_name
+                    assign list_modifiers = list_modifiers | append: ' has-chip'
+                  endif
+                -%}
+                <ul>
+                  {%- for filter_value in filter.values -%}
+                    {%- liquid
+                      if filter_value.active
+                        assign url = filter_value.url_to_remove
+                      else
+                        assign url = filter_value.url_to_add
+                      endif
+                    -%}
+
+                    {%- if swatch_options contains group_name -%}
+                      {%
+                        render 'filter-item' with
+                        type: 'swatch',
+                        forloop: forloop,
+                        filter_value: filter_value,
+                        scope: "mobile_modal"
+                      %}
+                    {%- elsif chip_options contains group_name -%}
+                      {%
+                        render 'filter-item' with
+                        type: 'chip',
+                        forloop: forloop,
+                        filter_value: filter_value,
+                        scope: "mobile_modal"
+                      %}
+                    {%- else -%}
+                      {%
+                        render 'filter-item' with
+                        type: 'checkbox',
+                        forloop: forloop,
+                        filter_value: filter_value,
+                        scope: "mobile_modal"
+                      %}
+                    {%- endif -%}
+                  {%- endfor -%}
+                </ul>
+              {%- when 'price_range' -%}
+                {% liquid
+                  assign max_price_amount = filter.range_max | money | strip_html | escape
+                %}
+                <div class="price-range" data-price-range>
+                  <div class="price-range-input-wrapper">
+                    <div class="price-range-input">
+                      <span class="price-range-currency">{{ cart.currency.symbol }}</span>
+                      <input
+                        data-min-range-input
+                        data-range-input
+                        class="input"
+                        name="{{ filter.min_value.param_name }}"
+                        id="filter-{{ filter.label | escape }}"
+                        {%- if filter.min_value.value -%}
+                          value="{{ filter.min_value.value | divided_by: 100 }}"
+                        {%- endif -%}
+                        type="number"
+                        placeholder="0"
+                        min="0"
+                        max="{{ filter.range_max | divided_by: 100 | ceil }}"
+                      >
+                      <label class="price-range-label visually-hidden" for="filter-{{ filter.label | escape }}">
+                        {{- 'filters.from' | t -}}
+                      </label>
+                    </div>
+                    <span class="price-range-separator">&ndash;</span>
+                    <div class="price-range-input">
+                      <span class="price-range-currency">{{ cart.currency.symbol }}</span>
+                      <input
+                        data-max-range-input
+                        data-range-input
+                        class="input"
+                        name="{{ filter.max_value.param_name }}"
+                        id="filter-{{ filter.label | escape }}"
+                        {%- if filter.max_value.value -%}
+                          value="{{ filter.max_value.value | divided_by: 100 }}"
+                        {%- endif -%}
+                        type="number"
+                        placeholder="{{ filter.range_max | divided_by: 100 | ceil }}"
+                        min="0"
+                        max="{{ filter.range_max | divided_by: 100 | ceil }}"
+                      >
+                      <label class="price-range-label visually-hidden" for="filter-{{ filter.label | escape }}">
+                        {{- 'filters.to' | t -}}
+                      </label>
+                    </div>
+                  </div>
+                </div>
+            {%- endcase -%}
+          </div>
+        </div>
+        {{ footer_markup }}
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  {% if show_sort %}
+    <div class="collection-modal" data-mobile-modal="__sort">
+      <div class="collection-modal__heading">
+        <div class="ff-heading fs-heading-base">{{ 'collections.sorting.title' | t }}</div>
+        <div data-close-icon>
+          {% render 'icon' with icon: 'close' %}
+        </div>
+      </div>
+      <div class="collection-modal__content" data-scroll-lock-ignore>
+        <form data-filter-form>
+          <ul>
+            {% for option in results.sort_options %}
+              {%- assign is_active = false -%}
+              {%- if option.value == results.sort_by -%}
+                {%- assign is_active = true -%}
+              {%- endif -%}
+              {%
+                render 'sort-item' with
+                label: option.name,
+                type: 'radio',
+                active: is_active,
+                key: 'sort',
+                val: option.value,
+                option: option,
+                scope: 'mobile-filter'
+              %}
+            {% endfor %}
+          </ul>
+        </form>
+      </div>
+      {{ footer_markup }}
+    </div>
+  {% endif %}
+</form>
+
+<div class="collection-modal__wash" data-mobile-wash></div>

@@ -1,0 +1,87 @@
+{%- liquid
+  # this is lazySizes specific image that we want to faze out
+
+  if image != image.preview_image and image.preview_image
+    # hack - nicer way?
+    assign image = image.preview_image
+  endif
+
+  assign height = image.height | times: 1.0 | default: 1.0
+  assign width = image.width | times: 1.0 | default: 1.0
+  assign padding_top = height | divided_by: width | times: 100 | append: '%'
+
+  if focal_point == 'image_presentation' and image.presentation.focal_point == '50.0% 50.0%'
+    assign focal_point = 'center'
+  endif
+
+  if focal_point
+    if focal_point == 'image_presentation'
+      assign focal_alignment = image.presentation.focal_point
+    else
+      assign focal_alignment = focal_point | replace: '_', ' '
+    endif
+  endif
+-%}
+
+{% if sizes != blank %}
+  {%- assign useRias = false %}
+  {% capture srcSet %}
+                              {{ image | image_url: width: 180 }} 180w,
+                              {{ image | image_url: width: 320 }} 320w,
+                              {{ image | image_url: width: 360 }} 360w,
+                              {{ image | image_url: width: 540 }} 540w,
+                              {{ image | image_url: width: 640 }} 640w,
+                              {{ image | image_url: width: 720 }} 720w,
+                              {{ image | image_url: width: 900 }} 900w
+  {% if image.width > 1080 %}, {{ image | image_url: width: 1080 }} 1080w {% endif %}
+  {% if image.width > 1296 %}, {{ image | image_url: width: 1296 }} 1296w {% endif %}
+  {% if image.width > 1512 %}, {{ image | image_url: width: 1512 }} 1512w {% endif %}
+  {% if image.width > 1728 %}, {{ image | image_url: width: 1728 }} 1728w {% endif %}
+  {% if image.width > 2048 %}, {{ image | image_url: width: 2048 }} 2048w {% endif %}
+  {% endcapture %}
+{% else %}
+  {%- assign useRias = true %}
+  {%- assign sizes = 'auto' -%}
+  {%- assign rias_img_url = image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+{% endif %}
+
+{%- if id == blank -%}
+  {%- assign id = image.id -%}
+{%- endif -%}
+
+<div
+  class="image image--{{ id }} image--responsive {{ wrapper_class }}"
+  style="
+    {%- if focal_alignment and object_fit != 'contain' -%}--focal-alignment: {{ focal_alignment }};{%- endif -%}
+    {%- if object_fit != blank and aspect_ratio != 'natural' -%}--object-fit: {{ object_fit }};{%- endif -%}
+    {% unless disable_style %} padding-top: {{ padding_top }} {% endunless %}
+  "
+>
+  <img
+    class="image__img lazyload {% if preload %}lazypreload{% endif %} {{ image_class }}"
+    src="{{ image | image_url: width: 300, height: 300 }}"
+    {% if useRias %}
+      data-src="{{ rias_img_url }}"
+      data-widths="[180, 320, 360, 540, 640, 720, 900, 1080, 1296, 1512, 1728, 2048]"
+    {% else %}
+      data-srcset="{{srcSet}}"
+    {% endif %}
+    data-aspectratio="{{ image.aspect_ratio }}"
+    data-sizes="{{sizes}}"
+    alt="{{ image.alt | escape }}"
+    {% if setLoadingAttribute %}
+      {% comment %} often unset so that lazysizes autosets this attr {% endcomment %}
+      {% if prioritizeLoading %}
+        loading="eager"
+      {% else %}
+        loading="lazy"
+      {% endif %}
+    {% endif %}
+  >
+</div>
+
+<noscript>
+  <div class="image image--{{ id }} {{ wrapper_class }}">
+    <img class="image__img" src="{{ image | image_url: width: 2048, height: 2048 }}" alt="{{ image.alt | escape }}">
+  </div>
+</noscript>

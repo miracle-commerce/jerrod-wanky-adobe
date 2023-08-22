@@ -1,0 +1,110 @@
+{%
+  render 'section--gallery' with
+  blocks: section.blocks,
+  settings: section.settings
+%}
+
+{% schema %}
+{
+  "name": "t:sections.gallery.name",
+  "class": "inline-section",
+  "disabled_on": {
+    "groups": ["header", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "id": "title",
+      "type": "text",
+      "label": "t:sections.gallery.settings.title.label",
+      "default": "Gallery"
+    },
+    {
+      "id": "link_text",
+      "type": "text",
+      "label": "t:sections.gallery.settings.link_text.label",
+      "default": "See all"
+    },
+    {
+      "id": "link",
+      "type": "url",
+      "label": "t:sections.gallery.settings.link.label"
+    },
+    {
+      "id": "aspect_ratio",
+      "type": "select",
+      "label": "t:shared.aspect_ratio.label",
+      "options": [
+        {
+          "label": "t:shared.aspect_ratio.options.natural",
+          "value": "natural"
+        },
+        {
+          "label": "t:shared.aspect_ratio.options.square",
+          "value": "square"
+        },
+        {
+          "label": "t:shared.aspect_ratio.options.landscape",
+          "value": "landscape"
+        },
+        {
+          "label": "t:shared.aspect_ratio.options.portrait",
+          "value": "portrait"
+        }
+      ],
+      "default": "square"
+    },
+    {
+      "id": "per_row",
+      "type": "range",
+      "label": "t:sections.gallery.settings.per_row.label",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    }
+  ],
+  "blocks": [
+    {
+      "type": "image",
+      "name": "t:sections.gallery.blocks.image.name",
+      "settings": [
+        {
+          "id": "image",
+          "type": "image_picker",
+          "label": "t:sections.gallery.blocks.image.settings.image.label"
+        },
+        {
+          "id": "text",
+          "type": "richtext",
+          "label": "t:sections.gallery.blocks.image.settings.text.label"
+        },
+        {
+          "id": "link",
+          "type": "url",
+          "label": "t:sections.gallery.blocks.image.settings.link.label"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.gallery.settings.title.label",
+      "category": "t:sections.gallery.blocks.image.name",
+      "blocks": [
+        {
+          "type": "image",
+          "settings": {}
+        },
+        {
+          "type": "image",
+          "settings": {}
+        },
+        {
+          "type": "image",
+          "settings": {}
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

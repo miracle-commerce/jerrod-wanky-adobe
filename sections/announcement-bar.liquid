@@ -1,0 +1,103 @@
+{% assign timing_in_ms = section.settings.timing | times: 1000 %}
+{% assign announcements = section.blocks %}
+
+{% assign visible = false %}
+{% if announcements.size > 0 %}
+  {% assign visible = true %}
+{% endif %}
+
+{% if visible %}
+  <section
+    class="announcement-bar"
+    data-section-id="{{ section.id }}"
+    data-section-type="announcement-bar"
+    data-timing="{{ timing_in_ms }}"
+    data-announcement-bar-item-count="{{announcements.size}}"
+  >
+    {% for block in announcements %}
+      <div
+        class="announcement-bar__item ff-body fs-body-small"
+        style="
+          --s-color-background: {{ block.settings.color_background }};
+          --s-color-text: {{ block.settings.color_text }};
+        "
+        data-single-announcement
+        data-index="{{ forloop.index0 }}"
+        {{ block.shopify_attributes }}
+      >
+        <div class="announcement-bar__content">
+          {%- if block.settings.link != blank -%}
+            <span>
+              <a class="color-inherit" href="{{ block.settings.link }}">
+                {{ block.settings.title | strip_html }}
+              </a>
+            </span>
+          {%- else -%}
+            <span>{{ block.settings.title | strip_html }}</span>
+          {%- endif -%}
+        </div>
+      </div>
+    {% endfor %}
+  </section>
+{% endif %}
+
+{% schema %}
+{
+  "name": "t:sections.announcement_bar.name",
+  "class": "announcement-bar__outer-wrapper",
+  "settings": [
+    {
+      "type": "range",
+      "id": "timing",
+      "label": "t:sections.announcement_bar.settings.timing.label",
+      "min": 3,
+      "max": 15,
+      "step": 1,
+      "default": 4
+    }
+  ],
+  "max_blocks": 3,
+  "blocks": [
+    {
+      "type": "announcement",
+      "name": "t:sections.announcement_bar.blocks.name",
+      "settings": [
+        {
+          "id": "title",
+          "type": "text",
+          "label": "t:sections.announcement_bar.blocks.settings.title.label",
+          "default": "Announce something here"
+        },
+        {
+          "id": "link",
+          "type": "url",
+          "label": "t:sections.announcement_bar.blocks.settings.link.label",
+          "info": "Optional"
+        },
+        {
+          "id": "color_background",
+          "type": "color",
+          "label": "t:sections.announcement_bar.blocks.settings.color_background.label",
+          "default": "#1D1D1D"
+        },
+        {
+          "id": "color_text",
+          "type": "color",
+          "label": "t:sections.announcement_bar.blocks.settings.color_text.label",
+          "default": "#FFFFFF"
+        }
+      ]
+    }
+  ],
+  "default": {
+    "blocks": [
+      {
+        "type": "announcement",
+        "settings": {
+          "title": "t:sections.announcement_bar.default.blocks.announcement.title"
+        }
+      }
+    ]
+  }
+}
+{% endschema %}

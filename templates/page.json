@@ -1,0 +1,167 @@
+{
+  "sections": {
+    "e0075669-c52f-4f12-a49c-cccb4ba061e1": {
+      "type": "2-column-mosaic-grid",
+      "blocks": {
+        "082ad9fe-1d56-417a-96fe-43059aa0ae30": {
+          "type": "medium_vertical_rect",
+          "settings": {
+            "image": "shopify:\/\/shop_images\/Laura_Trenchard.jpg",
+            "video_url": "",
+            "media_fit": "cover",
+            "focal_point": "image_presentation",
+            "title": "Laura",
+            "subheading": "<p>Craft<\/p>",
+            "text_max_width": 24,
+            "link_text": "Creative Director \/ Designer",
+            "link": "",
+            "text_position": "center_center",
+            "background_color": "",
+            "color_text": "#ffffff",
+            "color_subheading": "#b8b8b8",
+            "color_background_button": "#ffffff",
+            "color_text_button": "#000000",
+            "overlay_color": "#000000",
+            "color_overlay_gradient": "",
+            "overlay_opacity": 0
+          }
+        },
+        "2726aa8c-73d7-402d-ae2c-c3de9f96a55b": {
+          "type": "medium_vertical_rect",
+          "settings": {
+            "image": "shopify:\/\/shop_images\/Gretta.jpg",
+            "video_url": "",
+            "media_fit": "cover",
+            "focal_point": "image_presentation",
+            "title": "Gretta",
+            "subheading": "<p>Bertu Home<\/p>",
+            "text_max_width": 24,
+            "link_text": "",
+            "link": "",
+            "text_position": "center_center",
+            "background_color": "",
+            "color_text": "#ffffff",
+            "color_subheading": "#b8b8b8",
+            "color_background_button": "#000000",
+            "color_text_button": "#ffffff",
+            "overlay_color": "#000000",
+            "color_overlay_gradient": "",
+            "overlay_opacity": 0
+          }
+        },
+        "bdafcf86-c56e-47ac-967d-14d42c1a5d78": {
+          "type": "medium_vertical_rect",
+          "settings": {
+            "image": "shopify:\/\/shop_images\/Jerrod.jpg",
+            "video_url": "",
+            "media_fit": "cover",
+            "focal_point": "image_presentation",
+            "title": "Jerrod",
+            "subheading": "<p>Craft<\/p>",
+            "text_max_width": 24,
+            "link_text": "",
+            "link": "",
+            "text_position": "center_center",
+            "background_color": "",
+            "color_text": "#ffffff",
+            "color_subheading": "#b8b8b8",
+            "color_background_button": "#000000",
+            "color_text_button": "#ffffff",
+            "overlay_color": "#000000",
+            "color_overlay_gradient": "",
+            "overlay_opacity": 0
+          }
+        },
+        "169de5d2-ceda-413d-9add-e51aa5f47fb8": {
+          "type": "medium_vertical_rect",
+          "settings": {
+            "image": "shopify:\/\/shop_images\/Israel.jpg",
+            "video_url": "",
+            "media_fit": "cover",
+            "focal_point": "image_presentation",
+            "title": "Israel",
+            "subheading": "<p>Swanky and Bertu<\/p>",
+            "text_max_width": 24,
+            "link_text": "",
+            "link": "",
+            "text_position": "center_center",
+            "background_color": "",
+            "color_text": "#ffffff",
+            "color_subheading": "#b8b8b8",
+            "color_background_button": "#000000",
+            "color_text_button": "#ffffff",
+            "overlay_color": "#000000",
+            "color_overlay_gradient": "",
+            "overlay_opacity": 0
+          }
+        },
+        "d29e68e8-0bc1-4dfa-8d53-5972817dc6ce": {
+          "type": "medium_horizontal_rect",
+          "settings": {
+            "image": "shopify:\/\/shop_images\/the_boys_4.jpg",
+            "video_url": "",
+            "media_fit": "cover",
+            "focal_point": "image_presentation",
+            "title": "The Boys",
+            "subheading": "",
+            "text_max_width": 28,
+            "link_text": "",
+            "link": "",
+            "text_position": "center_center",
+            "background_color": "",
+            "color_text": "#ffffff",
+            "color_subheading": "#b8b8b8",
+            "color_background_button": "#000000",
+            "color_text_button": "#ffffff",
+            "overlay_color": "#000000",
+            "color_overlay_gradient": "",
+            "overlay_opacity": 0
+          }
+        },
+        "e477f91b-e889-4432-9d31-fe94a0c0e7f1": {
+          "type": "medium_horizontal_rect",
+          "settings": {
+            "image": "shopify:\/\/shop_images\/Belle.jpg",
+            "video_url": "",
+            "media_fit": "cover",
+            "focal_point": "image_presentation",
+            "title": "Belle",
+            "subheading": "",
+            "text_max_width": 28,
+            "link_text": "",
+            "link": "",
+            "text_position": "center_center",
+            "background_color": "",
+            "color_text": "#ffffff",
+            "color_subheading": "#b8b8b8",
+            "color_background_button": "#000000",
+            "color_text_button": "#ffffff",
+            "overlay_color": "#000000",
+            "color_overlay_gradient": "",
+            "overlay_opacity": 0
+          }
+        }
+      },
+      "block_order": [
+        "082ad9fe-1d56-417a-96fe-43059aa0ae30",
+        "2726aa8c-73d7-402d-ae2c-c3de9f96a55b",
+        "bdafcf86-c56e-47ac-967d-14d42c1a5d78",
+        "169de5d2-ceda-413d-9add-e51aa5f47fb8",
+        "d29e68e8-0bc1-4dfa-8d53-5972817dc6ce",
+        "e477f91b-e889-4432-9d31-fe94a0c0e7f1"
+      ],
+      "settings": {
+        "enable_full_width": false
+      }
+    },
+    "main": {
+      "type": "main-page",
+      "settings": {
+      }
+    }
+  },
+  "order": [
+    "e0075669-c52f-4f12-a49c-cccb4ba061e1",
+    "main"
+  ]
+}

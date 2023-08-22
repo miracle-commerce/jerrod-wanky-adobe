@@ -1,0 +1,117 @@
+{%
+  liquid
+  assign featured_image = nav.settings.featured_image
+  assign featured_image_aspect_ratio = nav.settings.featured_image_aspect_ratio
+  assign featured_image_diable_style = false
+  if featured_image_aspect_ratio != 'natural'
+    assign featured_image_diable_style = true
+  endif
+
+  assign featured_image_caption = nav.settings.featured_image_caption
+  assign featured_image_link = nav.settings.featured_image_link
+  assign featured_image_link_title = nav.settings.featured_image_link_title
+
+  assign col1_image = nav.settings.mega_nav_col1_image
+  assign col2_image = nav.settings.mega_nav_col2_image
+  assign col3_image = nav.settings.mega_nav_col3_image
+  assign col4_image = nav.settings.mega_nav_col4_image
+  assign col5_image = nav.settings.mega_nav_col5_image
+  assign column_images_aspect_ratio = nav.settings.column_images_aspect_ratio
+  assign column_images_diable_style = false
+  if column_images_aspect_ratio != 'natural'
+    assign column_images_diable_style = true
+  endif
+
+  assign loop_length = link.links.size
+
+  comment 
+      yikes but we want the loop to be as short as possible while still 
+      showing column images when no menu set
+  endcomment
+  if loop_length < 5 and col5_image
+    assign loop_length = 5
+  elsif loop_length < 4 and col4_image
+    assign loop_length = 4
+  elsif loop_length < 3 and col3_image
+    assign loop_length = 3
+  elsif loop_length < 2 and col2_image
+    assign loop_length = 2
+  elsif loop_length < 1 and col1_image
+    assign loop_length = 1
+  endif
+
+%}
+
+<nav class="mega-nav" data-mega-nav data-id="{{ nav.id }}" {{ nav.shopify_attributes }}>
+  <div class="mega-nav__overlay" data-overlay></div>
+
+  <div class="mega-nav__container">
+    <div class="mega-nav__columns">
+      {% assign range = (1..loop_length) %}
+      {%- for i in range -%}
+        {% assign zeroIndexed = i | minus: 1 %}
+        {% assign columnLink = link.links[zeroIndexed] %}
+        {%- liquid
+          assign column_image = nil
+          if forloop.index == 1 
+            assign column_image = col1_image
+          elsif forloop.index == 2
+            assign column_image = col2_image
+          elsif forloop.index == 3
+            assign column_image = col3_image
+          elsif forloop.index == 4
+            assign column_image = col4_image
+          elsif forloop.index == 5
+            assign column_image = col5_image
+          endif
+        -%}
+        <div class="mega-nav__column {% unless column_image or columnLink %}empty{% endunless%}">
+          {%- if column_image -%}
+            {%- if columnLink -%}<a href="{{ columnLink.url }}">{%- endif -%}
+            <div class="mega-nav__column-image mega-nav__column-image--{{ column_images_aspect_ratio }}">
+              {% render 'image',
+                image: column_image,
+                id: 'mega-nav-featured-image',
+                focal_point: nav.settings.focal_point,
+                disable_style: column_images_diable_style
+              %}
+            </div>
+            {%- if columnLink -%}</a>{%- endif -%}
+          {%- endif -%}
+          {%- if columnLink -%}
+            <h2><a href="{{ columnLink.url }}">{{ columnLink.title }}</a></h2>
+            {%- if columnLink.links.size > 0 -%}
+              <ul>
+                {%- for link in columnLink.links -%}
+                  <li class="">
+                    <a href="{{ link.url }}" class="{% if link.active %}active{% endif %}">{{ link.title }}</a>
+                  </li>
+                {%- endfor -%}
+              </ul>
+            {%- endif -%}
+          {%- endif -%}
+        </div>
+      {%- endfor -%}
+      {%- if featured_image -%}
+        <div class="mega-nav__column mega-nav__featured-image-column">
+          {%- if featured_image_link -%}<a href="{{ featured_image_link }}" class="mega-nav__image-link">{%- endif -%}
+          <div class="mega-nav__image mega-nav__image--{{ featured_image_aspect_ratio }}" style="--media-focal-point: {{ focal_point }};">
+            {% render 'image',
+              image: featured_image,
+              id: 'mega-nav-featured-image',
+              focal_point: nav.settings.focal_point,
+              disable_style: featured_image_diable_style
+            %}
+          </div>
+          {%- if featured_image_link -%}</a>{%- endif -%}
+          {%- if featured_image_caption and featured_image_caption.size > 0 -%}
+            <p>{{featured_image_caption}}</p>
+          {%- endif -%}
+          {%- if featured_image_link and featured_image_link_title and featured_image_link.size > 0 and featured_image_link_title.size > 0  -%}
+            <p><a href="{{featured_image_link}}">{{featured_image_link_title}}</a></p>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</nav>

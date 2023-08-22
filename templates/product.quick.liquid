@@ -1,0 +1,308 @@
+{% layout none %}
+{%- assign current_variant = product.first_available_variant -%}
+
+<div class="quick-add__product">
+  <div class="quick-add__image">
+    <a href="{{ product.url }}">
+      {%- if product.featured_media -%}
+        {%
+          render 'image' with
+          image: product.featured_media,
+          id: 'quick-add',
+          disable_style: true,
+        %}
+      {%- endif -%}
+    </a>
+  </div>
+  <div class="quick-add__details ff-body">
+    <h4>
+      <a href="{{ product.url }}">{{ product.title }}</a>
+    </h4>
+    <div>
+      <span data-price>
+        {{- current_variant.price | money -}}
+        {%- if settings.currency_code_enabled %} {{ cart.currency.iso_code }}{% endif -%}
+      </span>
+      <s data-compare-price>
+        {% if current_variant.compare_at_price > current_variant.price %}
+          {{ current_variant.compare_at_price | money -}}
+          {%- if settings.currency_code_enabled %} {{ cart.currency.iso_code }}{% endif %}
+        {% endif %}
+      </s>
+    </div>
+  </div>
+</div>
+
+<div class="quick-add__form">
+  {% liquid
+    assign file_extension = 'png'
+    assign swatch_options = settings.swatch_options | downcase | split: ', '
+    assign chip_options = settings.chip_options | downcase | split: ', '
+    assign button_options = swatch_options | concat: chip_options
+  %}
+
+  {% capture "form_classes" -%}
+    product-form product-form-{{ section.id }}
+    {%- unless section.settings.show_variant_labels %} product-form--hide-variant-labels {% endunless %}
+    {%- if show_dynamic_checkout and product.has_only_default_variant %}
+      product-form--payment-button-no-variants
+    {%- endif -%}
+    {%- if current_variant.available == false %} product-form--variant-sold-out{%- endif -%}
+  {%- endcapture %}
+
+  {% form 'product',
+    product,
+    class: form_classes,
+    novalidate: 'novalidate',
+    data-product-form: '',
+    data-product-handle: product.handle
+  %}
+    <span class="shopify-product-reviews-badge" data-id="{{ product.id }}"></span>
+
+    {% unless product.has_only_default_variant %}
+      <div class="product-form__controls-group">
+        {% for option in product.options_with_values %}
+          {%- assign option_name = option.name | downcase -%}
+
+          <div class="pf-container">
+            <div class="pf-element js-enabled {% if button_options contains option_name %}pf-element--flexible{% endif %}">
+              <label for="Option{{ option.position }}" class="pf-label fs-body-base">
+                <span>{{ option.name }}</span>
+              </label>
+
+              {% comment %}
+                All inputs that have `name=options[Name]` will be picked up by
+                ProductForm, registered as an option input, and made available
+                at ProductForm.optionsInputs
+              {% endcomment %}
+              {%- if swatch_options contains option_name -%}
+                <div class="product-form__color-swatches" data-option-buttons>
+                  {% for value in option.values %}
+                    <button
+                      data-swatch-button="true"
+                      data-label="{{ value }}"
+                      aria-label="{{value}}"
+                      data-button="{{ value | handleize }}--{{ forloop.index0 }}"
+                      class="product__color-swatch {% if option.selected_value == value %}selected{% endif %}"
+                      style="background-color: {{ value | lowercase | replace: ' ', '' }}; background-image: url({{ value | handle | append: '.' | append: 'png' | file_url }})"
+                    ></button>
+                  {% endfor %}
+                  <select
+                    id="Option{{ option.position }}"
+                    class="product-form__chip-select"
+                    name="options[{{ option.name | escape }}]"
+                  >
+                    {% for value in option.values %}
+                      <option
+                        value="{{ value | escape }}"
+                        data-value-handle="{{ value | handleize }}--{{ forloop.index0 }}"
+                        {%- if option.selected_value == value -%}
+                          selected="selected"
+                        {%- endif -%}
+                      >
+                        {{ value }}
+                      </option>
+                    {% endfor %}
+                  </select>
+                </div>
+              {%- elsif chip_options contains option_name and quick != true -%}
+                <div class="product-form__chips" data-option-buttons>
+                  {% for value in option.values %}
+                    <button
+                      class="fs-body-base product-form__chip {% if option.selected_value == value %}selected{% endif %}"
+                      data-button="{{ value | handleize }}--{{ forloop.index0 }}"
+                      aria-label="{{ value }}"
+                    >
+                      {{ value }}
+                    </button>
+                  {% endfor %}
+                  <select
+                    id="Option{{ option.position }}"
+                    class="product-form__chip-select"
+                    name="options[{{ option.name | escape }}]"
+                  >
+                    {% for value in option.values %}
+                      <option
+                        value="{{ value | escape }}"
+                        data-value-handle="{{ value | handleize }}--{{ forloop.index0 }}"
+                        {%- if option.selected_value == value -%}
+                          selected="selected"
+                        {%- endif -%}
+                      >
+                        {{ value }}
+                      </option>
+                    {% endfor %}
+                  </select>
+                </div>
+              {%- else -%}
+                <select
+                  id="Option{{ option.position }}"
+                  class="pf-input"
+                  name="options[{{ option.name | escape }}]"
+                >
+                  {% for value in option.values %}
+                    <option
+                      value="{{ value | escape }}"
+                      data-value-handle="{{ value | handleize }}--{{ forloop.index0 }}"
+                      {%- if option.selected_value == value -%}
+                        selected="selected"
+                      {%- endif -%}
+                    >
+                      {{ value }}
+                    </option>
+                  {% endfor %}
+                </select>
+
+                <div class="pf-icon" data-icon>{% render 'icon' with icon: 'arrow-drop-down' %}</div>
+              {%- endif -%}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% endunless %}
+
+    {% comment %}
+      In order for this form to submit, it needs to contain an input with name="id".
+      ProductForm() will automatically create this input (or make sure it has the
+      right value set if it already exists) on form submit based on the
+      currently selected variant. However, if JS is disabled we need a fallback.
+
+      render a single <select> element which allows users to select all variants
+      as a fallback and present it only when JS is disabled. In addition,
+      make sure you hide the option inputs declared above, like we do with the
+      `.js-enabled` class which only shows its contents when JS is enabled.
+    {% endcomment %}
+    <div class="pf-container product-form__variants">
+      <select
+        name="id"
+        class="input"
+        id="variant-selector"
+        data-variant-select
+      >
+        {% for variant in product.variants %}
+          <option
+            value="{{ variant.id }}"
+            {%- if variant == current_variant %}
+              selected="selected"
+            {%- endif -%}
+          >
+            {{ variant.title }}
+            {%- if variant.available == false %} - {{ 'products.product.sold_out' | t }}{% endif %}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    {% if settings.cart_quick_shop_show_quantity %}
+      <div class="pf-container">
+        <div class="pf-element">
+          <label class="pf-label fs-body-base" for="Quantity-{{ section.id }}">
+            <span>{{ 'products.product.quantity' | t }}</span>
+          </label>
+          <input
+            data-quantity-input
+            type="number"
+            id="Quantity-{{ section.id }}"
+            name="quantity"
+            value="1"
+            min="1"
+            pattern="[0-9]*"
+            class="pf-input"
+          >
+        </div>
+      </div>
+    {% endif %}
+
+    {% if product.selling_plan_groups.size > 0 %}
+      <div class="pf-container">
+        <div class="pf-element js-enabled">
+          <label for="plans" class="pf-label fs-body-base">
+            <span>{{ 'products.product.selling_plan_options' | t }}</span>
+          </label>
+
+          <select id="plans" class="pf-input" name="selling_plan">
+            <option value="">{{ 'products.product.selling_plan_one_time' | t }}</option>
+            {% for group in product.selling_plan_groups %}
+              <optgroup label="{{ group.name }}">
+                {% for plan in group.selling_plans %}
+                  <option value="{{ plan.id }}">
+                    {{ plan.name }}
+                  </option>
+                {% endfor %}
+              </optgroup>
+            {% endfor %}
+          </select>
+
+          <div class="pf-icon" data-icon>{% render 'icon' with icon: 'arrow-drop-down' %}</div>
+        </div>
+      </div>
+    {% endif %}
+
+    <div class="pf__message fs-body-base" data-error-message></div>
+
+    <div class="pf__actions">
+      <div
+        class="
+          product-form__item product-form__item--submit
+          {%- if show_dynamic_checkout %} product-form__item--payment-button {%- endif -%}
+          {%- if product.has_only_default_variant %} product-form__item--no-variants {%- endif -%}
+        "
+      >
+        {%- liquid
+          assign product_available_label = 'product.add_to_cart' | t
+
+          if product.template_suffix == 'preorder'
+            assign product_available_label = 'product.preorder' | t
+          endif
+        -%}
+        <button
+          type="submit"
+          name="add"
+          {% unless current_variant.available %}
+            aria-disabled="true" disabled
+          {% endunless %}
+          aria-label="{% unless current_variant.available %}{{ 'product.sold_out' | t }}{% else %}{{ 'products.product.add_to_cart' | t }}{% endunless %}"
+          class="btn btn--full product-form__cart-submit {% if show_dynamic_checkout != true or product.selling_plan_groups.size > 0 %}btn--primary{% endif %}"
+          data-add-to-cart
+          data-lang-available="{{ product_available_label }}"
+          data-lang-unavailable="{{ 'product.unavailable' | t }}"
+          data-lang-sold-out="{{ 'product.sold_out' | t }}"
+        >
+          <span data-add-to-cart-text>
+            {% unless current_variant.available %}
+              {{ 'product.sold_out' | t }}
+            {% else %}
+              {{ product_available_label }}
+            {% endunless %}
+          </span>
+          <div class="btn__loading-wrap">
+            <div class="btn__loading-bar"></div>
+          </div>
+        </button>
+
+        {% if show_dynamic_checkout %}
+          {{ form | payment_button }}
+        {% endif %}
+
+        {%- if shop.taxes_included or shop.shipping_policy.body != blank -%}
+          <div class="product__policies fs-body-base rte" data-product-policies>
+            {%- if shop.taxes_included -%}
+              {{ 'products.product.include_taxes' | t }}
+            {%- endif -%}
+            {%- if shop.shipping_policy.body != blank -%}
+              {{ 'products.product.shipping_policy_html' | t: link: shop.shipping_policy.url }}
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+
+        {% comment %} Shop Pay {% endcomment %}
+        <div class="product-form__shop-pay fs-body-base">
+          {{- form | payment_terms -}}
+        </div>
+
+        {% comment %} Surface pick-up {% endcomment %}
+        <div data-store-availability-container data-base-url="{{ shop.url }}{{ routes.root_url }}"></div>
+      </div>
+    </div>
+  {% endform %}
+</div>

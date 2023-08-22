@@ -1,0 +1,64 @@
+<script>
+  console.log('Ira v5.1.0 by Fluorescent');
+
+  document.documentElement.className = document.documentElement.className.replace('no-js', '');
+
+  if (window.matchMedia(`(prefers-reduced-motion: reduce)`) === true || window.matchMedia(`(prefers-reduced-motion: reduce)`).matches === true) {
+    document.documentElement.classList.add('prefers-reduced-motion');
+  }
+
+  window.theme = {
+    version: 'v5.1.0',
+    routes: {
+      root: "{{ routes.root_url }}",
+      cart: {
+        base: "{{ routes.cart_url }}",
+        add: "{{ routes.cart_add_url }}",
+        change: "{{ routes.cart_change_url }}",
+        clear: "{{ routes.cart_clear_url }}",
+      },
+      // Manual routes until Shopify adds support
+      products: "{% if routes.root_url == '/' %}/products{% else %}{{ routes.root_url }}/products{% endif %}",
+      productRecommendations: "{{ routes.product_recommendations_url }}",
+      predictive_search_url: '{{ routes.predictive_search_url }}'
+
+    },
+    strings: {
+      cart: {
+        remove: {{ 'cart.general.remove' | t | json }}
+      },
+      product: {
+        reviews: {{ 'product.reviews' | t | json }}
+      },
+      products: {
+        product: {
+          unitPrice: {{ 'products.product.unit_price_label' | t | json }},
+          unitPriceSeparator: {{ 'general.accessibility.unit_price_separator' | t | json }}
+        }
+      },
+      search: {
+        headings: {
+          articles: {{ 'search.headings.articles' | t | json }},
+          pages: {{ 'search.headings.pages' | t | json }},
+          products: {{ 'search.headings.products' | t | json }}
+        },
+        view_all: {{ 'search.view_all' | t | json }},
+        no_results: {{ 'search.no_results' | t | json }}
+      },
+      accessibility: {
+        play_video: {{ 'general.accessibility.play' | t | json }},
+        pause_video: {{ 'general.accessibility.pause' | t | json }}
+      }
+    }
+  }
+</script>
+
+{%- if settings.currency_code_enabled -%}
+  <script>
+    window.theme.moneyFormat = {{ shop.money_with_currency_format | json }}
+  </script>
+{%- else -%}
+  <script>
+    window.theme.moneyFormat = {{ shop.money_format | json }}
+  </script>
+{%- endif -%}

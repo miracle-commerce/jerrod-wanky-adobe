@@ -1,0 +1,78 @@
+{%
+  render 'section--collection-list' with
+  heading: section.settings.title,
+  per_row: section.settings.per_row,
+  aspect_ratio: section.settings.aspect_ratio,
+  blocks: section.blocks
+%}
+
+{% schema %}
+{
+  "name": "t:sections.collection_list.name",
+  "class": "inline-section",
+  "max_blocks": 12,
+  "disabled_on": {
+    "groups": ["header", "custom.overlay"],
+    "templates": ["password"]
+  },
+  "settings": [
+    {
+      "id": "title",
+      "type": "text",
+      "label": "t:sections.collection_list.settings.title.label",
+      "default": "Collection list"
+    },
+    {
+      "id": "per_row",
+      "type": "range",
+      "label": "t:sections.collection_list.settings.per_row.label",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "id": "aspect_ratio",
+      "type": "select",
+      "label": "t:shared.aspect_ratio.label",
+      "options": [
+        { "value": "natural", "label": "t:shared.aspect_ratio.options.natural" },
+        { "value": "square", "label": "t:shared.aspect_ratio.options.square" },
+        { "value": "landscape", "label": "t:shared.aspect_ratio.options.landscape" },
+        { "value": "portrait", "label": "t:shared.aspect_ratio.options.portrait" }
+      ],
+      "default": "natural"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "collection",
+      "name": "t:sections.collection_list.blocks.name",
+      "settings": [
+        {
+          "id": "collection",
+          "type": "collection",
+          "label": "t:sections.collection_list.blocks.settings.collection.label"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collection list",
+      "category": "Collection",
+      "blocks": [
+        {
+          "type": "collection"
+        },
+        {
+          "type": "collection"
+        },
+        {
+          "type": "collection"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

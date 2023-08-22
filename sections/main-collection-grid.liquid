@@ -1,0 +1,191 @@
+{% liquid
+  assign pagination = section.settings.pagination
+  assign per_row = section.settings.per_row
+  assign per_page = section.settings.per_page
+  assign show_sort = section.settings.show_sort
+  assign show_filter = section.settings.show_filter
+  assign show_sidebar = false
+  assign paginated = false
+  if pagination == 'paginated'
+    assign paginated = true
+  endif
+
+  if show_sort or show_filter
+    assign show_sidebar = true
+  endif
+
+  assign show_rule = false
+  if settings.enable_section_borders and show_sidebar
+    if show_enhanced_header or show_as_slideshow
+      assign show_rule = true
+    endif
+  endif
+%}
+
+{% paginate collection.products by per_page %}
+  <section
+    class="
+      collection
+      collection--pagination-{{ pagination }}
+      s-inline-section
+    "
+    data-section-id="{{ section.id }}"
+    data-section-type="collection"
+    data-pagination-type="{{ pagination }}"
+  >
+    <div
+      class="
+        collection__content
+        {% if show_rule %}collection__content--rule{% endif %}
+      "
+      data-js-container
+    >
+      {%- if show_sidebar -%}
+        <div class="collection__sidebar" data-js-sidebar>
+          <a href="#products" class="skip-to-content-button">
+            {{ 'general.accessibility.skip_to_content' | t }}
+          </a>
+          {%
+            render 'collection-sidebar' with
+            results: collection,
+            show_sort: show_sort
+            show_filter: show_filter
+          %}
+        </div>
+      {%- endif -%}
+
+      <div class="collection__main-area">
+        {% if show_sidebar %}
+          {%
+            render 'mobile-filters' with
+            results: collection,
+            show_filter: section.settings.show_filter,
+            show_sort: section.settings.show_sort
+          %}
+        {% endif %}
+
+        <div class="collection__window" id="products">
+          <div class="collection__loading" data-js-loading>
+            {% render 'loader' %}
+          </div>
+
+          <div id="root" class="collection__main" data-js-partial>
+            {%
+              render 'collection-top-bar' with
+              results: collection
+            %}
+
+            <div class="collection__grid grid animation--grid" data-infinite-scroll-container>
+              {% for product in collection.products %}
+                <div class="grid__item grid__item--{{ per_row }} animation--grid-item">
+                  {%
+                    render 'product-item' with
+                    product: product,
+                    aspect_ratio: section.settings.aspect_ratio,
+                  %}
+                </div>
+              {% else %}
+                <div class="collection__empty">
+                  <div class="ff-heading fs-heading-small">No products</div>
+                  <a class="link ff-body fs-body-base" data-clear="true">{{ 'filters.clear_filters' | t }}</a>
+                </div>
+              {% endfor %}
+            </div>
+
+            <div class="collection__pagination">
+              {% render 'pagination', paginate: paginate, disable_page_transitions: true, paginated: paginated %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {%
+      render 'mobile-filtering-modal' with
+      results: collection,
+      show_sort: section.settings.show_sort,
+      show_filter: section.settings.show_filter
+    %}
+  </section>
+{% endpaginate %}
+
+{% schema %}
+{
+  "name": "t:sections.main_collection_grid.name",
+  "class": "collection-grid-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Sidebar"
+    },
+    {
+      "id": "show_filter",
+      "type": "checkbox",
+      "label": "t:sections.main_collection_grid.settings.show_filter.label",
+      "default": true,
+      "info": "t:sections.main_collection_grid.settings.show_filter.info"
+    },
+    {
+      "id": "show_sort",
+      "type": "checkbox",
+      "label": "t:sections.main_collection_grid.settings.show_sort.label",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "t:sections.main_collection_grid.settings.header_grid.content"
+    },
+    {
+      "id": "per_row",
+      "type": "range",
+      "label": "t:sections.main_collection_grid.settings.per_row.label",
+      "default": 3,
+      "min": 2,
+      "max": 4,
+      "step": 1
+    },
+    {
+      "id": "per_page",
+      "type": "range",
+      "label": "t:sections.main_collection_grid.settings.per_page.label",
+      "default": 12,
+      "min": 2,
+      "max": 24,
+      "step": 1
+    },
+    {
+      "type": "select",
+      "id": "pagination",
+      "label": "t:sections.main_collection_grid.settings.pagination.label",
+      "default": "paginated",
+      "options": [
+        {
+          "value": "infinite",
+          "label": "t:sections.main_collection_grid.settings.pagination.option_1"
+        },
+        {
+          "value": "click",
+          "label": "t:sections.main_collection_grid.settings.pagination.option_2"
+        },
+        {
+          "value": "paginated",
+          "label": "t:sections.main_collection_grid.settings.pagination.option_3"
+        }
+      ],
+      "info": "t:sections.main_collection_grid.settings.pagination.info"
+    },
+    {
+      "id": "aspect_ratio",
+      "type": "select",
+      "label": "t:shared.aspect_ratio.label",
+      "options": [
+        { "label": "t:shared.aspect_ratio.options.natural", "value": "natural" },
+        { "label": "t:shared.aspect_ratio.options.square", "value": "square" },
+        { "label": "t:shared.aspect_ratio.options.landscape", "value": "landscape" },
+        { "label": "t:shared.aspect_ratio.options.portrait", "value": "portrait" }
+      ],
+      "default": "square"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,14 @@
+{%- if dot_count > 1 -%}
+  <div class="navigation-dots">
+    <div class="navigation-dots__inner">
+      {%- for i in (1..dot_count) -%}
+        <button
+          type="button"
+          class="navigation-dot{% if forloop.first %} is-selected{% endif %}"
+          data-slide-index="{{ forloop.index0 }}"
+          aria-label="{{ 'general.accessibility.carousel_select' | t: number: forloop.index }}"
+        ></button>
+      {%- endfor -%}
+    </div>
+  </div>
+{%- endif -%}

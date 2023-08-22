@@ -1,0 +1,22 @@
+{%- assign heading = 'collections.sorting.title' | t -%}
+{%- assign sort_by = results.sort_by | default: results.default_sort_by -%}
+<div class="collection-sidebar__group" data-group="{{ heading }}">
+  {% render 'collection-sidebar-heading' with heading: heading %}
+  <ul>
+    {% for option in results.sort_options %}
+      {%- assign is_active = false -%}
+      {%- if option.value == sort_by -%}
+        {%- assign is_active = true -%}
+      {%- endif -%}
+      {% render 'sort-item' with
+        label: option.name,
+        type: 'radio',
+        active: is_active,
+        key: 'sort',
+        val: option.value,
+        option: option,
+        scope: scope
+      %}
+    {% endfor %}
+  </ul>
+</div>

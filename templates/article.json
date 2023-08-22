@@ -1,0 +1,96 @@
+{
+  "sections": {
+    "ded2996e-ce11-4806-bc50-16f846131e57": {
+      "type": "2-column-mosaic-grid",
+      "blocks": {
+        "template--14621535567935__ded2996e-ce11-4806-bc50-16f846131e57-16878687342b1b2a19-1": {
+          "type": "small_square",
+          "settings": {
+            "image": "shopify:\/\/shop_images\/craft_associates_furniture.jpg",
+            "video_url": "",
+            "media_fit": "cover",
+            "focal_point": "image_presentation",
+            "title": "High Point - Blue",
+            "subheading": "",
+            "text_max_width": 32,
+            "link_text": "Craft at Highpoint",
+            "link": "shopify:\/\/pages\/projects",
+            "text_position": "center_center",
+            "background_color": "",
+            "color_text": "#ffffff",
+            "color_subheading": "#B8B8B8",
+            "color_background_button": "#000000",
+            "color_text_button": "#ffffff",
+            "overlay_color": "#000",
+            "color_overlay_gradient": "",
+            "overlay_opacity": 0
+          }
+        },
+        "template--14621535567935__ded2996e-ce11-4806-bc50-16f846131e57-16878687342b1b2a19-2": {
+          "type": "small_square",
+          "settings": {
+            "image": "shopify:\/\/shop_images\/Craft_Modern_Showroom_-_High_Point_image_8_98e25dad-60cf-41b3-a904-5582998c634c.jpg",
+            "video_url": "",
+            "media_fit": "cover",
+            "focal_point": "image_presentation",
+            "title": "Craft at Highpoint",
+            "subheading": "",
+            "text_max_width": 28,
+            "link_text": "Highpoint - Black",
+            "link": "shopify:\/\/pages\/projects",
+            "text_position": "center_center",
+            "background_color": "",
+            "color_text": "#ffffff",
+            "color_subheading": "#B8B8B8",
+            "color_background_button": "#000000",
+            "color_text_button": "#ffffff",
+            "overlay_color": "#000",
+            "color_overlay_gradient": "",
+            "overlay_opacity": 0
+          }
+        }
+      },
+      "block_order": [
+        "template--14621535567935__ded2996e-ce11-4806-bc50-16f846131e57-16878687342b1b2a19-1",
+        "template--14621535567935__ded2996e-ce11-4806-bc50-16f846131e57-16878687342b1b2a19-2"
+      ],
+      "settings": {
+        "enable_full_width": false
+      }
+    },
+    "main": {
+      "type": "main-article",
+      "disabled": true,
+      "blocks": {
+        "title": {
+          "type": "title",
+          "settings": {
+          }
+        },
+        "featured_image": {
+          "type": "featured_image",
+          "settings": {
+          }
+        },
+        "content": {
+          "type": "content",
+          "settings": {
+          }
+        }
+      },
+      "block_order": [
+        "title",
+        "featured_image",
+        "content"
+      ],
+      "settings": {
+        "show_share": true,
+        "show_pagination": true
+      }
+    }
+  },
+  "order": [
+    "ded2996e-ce11-4806-bc50-16f846131e57",
+    "main"
+  ]
+}

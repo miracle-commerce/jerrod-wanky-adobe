@@ -1,0 +1,99 @@
+{% liquid
+  assign placeholder = true
+  if blocks.size > 0
+    assign placeholder = false
+  endif
+
+  assign disabled_image_style = false
+  if settings.aspect_ratio != 'natural'
+    assign disabled_image_style = true
+  endif
+%}
+
+<section
+  class="gallery s-inline-section"
+  data-section-id="{{ section.id }}"
+  data-section-type="gallery"
+>
+  {%
+    render 'section-header' with
+    heading: settings.title,
+    link_text: settings.link_text,
+    url: settings.link
+  %}
+
+  {%- if placeholder == false -%}
+    <div class="gallery__rectangle-row mobile-carousel" data-slider>
+      {%- for block in blocks -%}
+        <div
+          class="gallery__rectangle gallery__rectangle--{{ settings.per_row }}"
+          data-slide
+          data-index="{{ forloop.index }}"
+          {{ block.shopify_attributes }}
+        >
+          {%- if block.settings.link != blank -%}
+            <a
+              href="{{ block.settings.link }}"
+              class="gallery__image gallery__image--{{ settings.aspect_ratio }} borders hover"
+            >
+              {%- if block.settings.image != blank -%}
+                {% render 'image',
+                  image: block.settings.image,
+                  focal_point: 'image_presentation',
+                  disable_style: disabled_image_style
+                %}
+              {%- else -%}
+                <div class="placeholder-image">
+                  {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+                </div>
+              {%- endif -%}
+            </a>
+          {%- else -%}
+            <div class="gallery__image gallery__image--{{ settings.aspect_ratio }} borders">
+              {%- if block.settings.image != blank -%}
+                {% render 'image',
+                  image: block.settings.image,
+                  focal_point: 'image_presentation',
+                  disable_style: disabled_image_style
+                %}
+              {%- else -%}
+                <div class="placeholder-image">
+                  {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+                </div>
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+
+          {%- if block.settings.text != blank -%}
+            <div class="gallery__caption fs-body-base">
+              {{ block.settings.text }}
+              {%- if block.settings.link != blank -%}
+                <a class="c-subheading" href="{{ block.settings.link }}">{{ 'sections.gallery.more' | t }}</a>
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+        </div>
+      {%- endfor -%}
+
+      {% render 'carousel-pagination' %}
+    </div>
+
+  {%- else -%}
+    <div class="gallery__rectangle-row mobile-carousel" data-slider>
+      {%- for i in (1..settings.per_row) -%}
+        <div
+          class="gallery__rectangle gallery__rectangle--{{ settings.per_row }}"
+          data-slide
+        >
+          <div class="gallery__image gallery__image--{{ settings.aspect_ratio }} borders">
+            <div class="placeholder-image">
+              {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+            </div>
+          </div>
+        </div>
+      {%- endfor -%}
+
+      {% render 'carousel-pagination' %}
+    </div>
+  {%- endif -%}
+</section>

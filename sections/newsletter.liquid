@@ -1,0 +1,93 @@
+{% liquid
+  assign heading = section.settings.title
+  assign subheading = section.settings.subheading
+  assign subheading_max_width = section.settings.subheading_max_width
+  assign placeholder = section.settings.placeholder
+%}
+
+<section
+  class="newsletter s-inline-section"
+  data-section-id="{{ section.id }}"
+  data-section-type="newsletter"
+  style="    --max-width-subheading: {{ subheading_max_width }}ch;"
+>
+  {%
+    render 'section-header' with
+    heading: heading
+  %}
+
+  {%- if section.settings.subheading -%}
+    <div class="newsletter__subheading fs-body-base">{{ section.settings.subheading }}</div>
+  {%- endif -%}
+
+  {% form 'customer', class: 'newsletter__form' %}
+    {{ form.errors | default_errors }}
+    {% if form.posted_successfully? %}
+      <p class="newsletter__success fs-body-base">{{ 'general.newsletter_form.confirmation' | t }}</p>
+    {% else %}
+      <input type="hidden" name="contact[tags]" value="newsletter">
+      <label for="newsletterSection-emailInput" class="visually-hidden">
+        {{- 'general.newsletter_form.email_placeholder' | t -}}
+      </label>
+      <input
+        type="email"
+        class="input newsletter__input"
+        name="contact[email]"
+        id="newsletterSection-emailInput"
+        value="{% if customer.email != blank %}{{ customer.email }}{% endif %}"
+        placeholder="{{ placeholder }}"
+        autocorrect="off"
+        autocapitalize="off"
+      >
+      <button class="visually-hidden" type="submit">Submit</button>
+    {% endif %}
+  {% endform %}
+</section>
+
+{% schema %}
+{
+  "name": "t:sections.newsletter.name",
+  "class": "inline-section",
+  "disabled_on": {
+    "groups": ["header", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "id": "title",
+      "type": "text",
+      "label": "t:sections.newsletter.settings.title.label",
+      "default": "Sign up for our newsletter"
+    },
+    {
+      "id": "subheading",
+      "type": "richtext",
+      "label": "t:sections.newsletter.settings.subheading.label"
+    },
+    {
+      "id": "subheading_max_width",
+      "type": "range",
+      "label": "t:sections.newsletter.settings.subheading_max_width.label",
+      "default": 70,
+      "min": 40,
+      "max": 90,
+      "step": 5
+    },
+    {
+      "id": "placeholder",
+      "type": "text",
+      "label": "t:sections.newsletter.settings.placeholder.label",
+      "default": "Enter your email address and press return →"
+    },
+    {
+      "type": "paragraph",
+      "content": "t:sections.newsletter.settings.note"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.newsletter.presets.name",
+      "category": "Promotional"
+    }
+  ]
+}
+{% endschema %}

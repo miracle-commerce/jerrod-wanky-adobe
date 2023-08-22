@@ -1,0 +1,5 @@
+{% if alignment == blank %} {% assign alignment = "right" %} {% endif %}
+
+<button type="button" class="btn btn--primary btn--small video-pause video-pause--{{ alignment }}">
+  {{ 'general.accessibility.pause' | t }}
+</button>

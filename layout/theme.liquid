@@ -1,0 +1,130 @@
+<!doctype html>
+
+<!--
+  ___                       ___           ___           ___
+       /  /\                     /__/\         /  /\         /  /\
+      /  /:/_                    \  \:\       /  /:/        /  /::\
+     /  /:/ /\  ___     ___       \  \:\     /  /:/        /  /:/\:\
+    /  /:/ /:/ /__/\   /  /\  ___  \  \:\   /  /:/  ___   /  /:/  \:\
+   /__/:/ /:/  \  \:\ /  /:/ /__/\  \__\:\ /__/:/  /  /\ /__/:/ \__\:\
+   \  \:\/:/    \  \:\  /:/  \  \:\ /  /:/ \  \:\ /  /:/ \  \:\ /  /:/
+    \  \::/      \  \:\/:/    \  \:\  /:/   \  \:\  /:/   \  \:\  /:/
+     \  \:\       \  \::/      \  \:\/:/     \  \:\/:/     \  \:\/:/
+      \  \:\       \__\/        \  \::/       \  \::/       \  \::/
+       \__\/                     \__\/         \__\/         \__\/
+
+  --------------------------------------------------------------------
+  #  Ira v5.1.0
+  #  Documentation: https://fluorescent.co/help/ira/
+  #  Purchase: https://themes.shopify.com/themes/ira/
+  #  A product by Fluorescent: https://fluorescent.co/
+  --------------------------------------------------------------------
+-->
+
+<html class="no-js" lang="{{ request.locale.iso_code }}">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="canonical" href="{{ canonical_url }}">
+    <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
+
+    {%- unless settings.font_heading.system? and settings.font_body.system? -%}
+      <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
+    {%- endunless -%}
+
+    {%- if settings.favicon != blank -%}
+      <link rel="shortcut icon" href="{{ settings.favicon | image_url: width: 32, height: 32 }}" type="image/png">
+    {%- endif -%}
+
+    {%- capture seo_title -%}
+      {%- if request.page_type == 'search' and search.performed == true -%}
+        {{ 'search.heading' | t: count: search.results_count }}:
+        {{ 'search.results_with_count' | t: terms: search.terms, count: search.results_count }}
+      {%- else -%}
+        {{ page_title }}
+      {%- endif -%}
+      {%- if current_tags -%}
+        {%- assign meta_tags = current_tags | join: ', ' -%}
+        &ndash; {{ 'general.meta.tags' | t: tags: meta_tags -}}
+      {%- endif -%}
+      {%- if current_page != 1 -%}
+        &ndash; {{ 'general.meta.page' | t: page: current_page }}
+      {%- endif -%}
+      {%- assign escaped_page_title = page_title | escape -%}
+      {%- unless escaped_page_title contains shop.name -%}
+        &ndash; {{ shop.name }}
+      {%- endunless -%}
+    {%- endcapture -%}
+    <title>{{ seo_title | strip }}</title>
+
+    {%- if page_description -%}
+      <meta name="description" content="{{ page_description | escape }}">
+    {%- endif -%}
+
+    {%- render 'social-meta-tags' -%}
+
+    {%- render 'theme-setup' -%}
+    {%- render 'theme-setting-vars' -%}
+    {%- render 'theme-globals' -%}
+
+    {{ content_for_header }}
+  </head>
+
+  <body
+    class="
+      template-{{ request.page_type | handle }}
+      {% if settings.enable_section_borders %}show-borders{% endif %}
+    "
+    {% if settings.cart_type == 'flyout' %}
+      data-enable-quick-cart="true"
+    {% endif %}
+    {% if settings.cart_enable_quick_shop %}
+      data-enable-quick-add-to-cart="true"
+    {% endif %}
+  >
+    <div class="page">
+      <div class="theme-editor-scroll-offset"></div>
+
+      <div class="header__space" data-header-space></div>
+      {% sections 'header-group' %}
+
+      {% sections 'overlay-group' %}
+
+      <main id="main" role="main" class="main">
+        {{ content_for_layout }}
+      </main>
+
+      {% sections 'footer-group' %}
+
+      {% render 'store-availability-modal' %}
+      {% render 'modal' %}
+
+      {% if settings.enable_page_transitions %}
+        <div class="active" id="page-transition-overlay"></div>
+        <script>
+          var pageTransitionOverlay = document.getElementById("page-transition-overlay"),
+              internalReferrer = document.referrer.includes(document.location.origin),
+              winPerf = window.performance,
+              navTypeLegacy = winPerf && winPerf.navigation && winPerf.navigation.type,
+              navType = winPerf && winPerf.getEntriesByType && winPerf.getEntriesByType("navigation")[0] && winPerf.getEntriesByType("navigation")[0].type;
+
+          if (!internalReferrer || navType !== "navigate" || navTypeLegacy !== 0) {
+            {% comment %}
+            goal is to avoid transitioning if it isn't a navigation throughout the site to improve performance
+            {% endcomment %}
+            pageTransitionOverlay.className = "active skip-animation";
+            setTimeout(function(){
+              pageTransitionOverlay.className = "skip-animation";
+              setTimeout(function(){ pageTransitionOverlay.className = ""; }, 1);
+            }, 1);
+          } else { {% comment %} fallback if app js breaks {% endcomment %}
+            setTimeout(function(){
+              pageTransitionOverlay.className = "";
+            }, 500);
+          }
+        </script>
+      {% endif %}
+    </div>
+  </body>
+</html>

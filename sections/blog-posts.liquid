@@ -1,0 +1,123 @@
+{% liquid
+  assign heading = section.settings.title
+  assign blog = blogs[section.settings.blog]
+  assign per_row = section.settings.per_row
+  assign rows = section.settings.rows
+  assign max_posts = per_row | times: rows
+  assign aspect_ratio = section.settings.aspect_ratio
+
+  assign disabled_image_style = false
+  if aspect_ratio != 'natural'
+    assign disabled_image_style = true
+  endif
+%}
+
+<section
+  class="blog-posts s-inline-section"
+  data-section-id="{{ section.id }}"
+  data-section-type="blog-posts"
+>
+  {% render 'section-header', heading: heading, url: blog.url %}
+
+  <div class="blog-posts__wrapper">
+    <div class="blog-posts__grid mobile-carousel" data-slider>
+      {%- if blog != blank -%}
+        {%- for article in blog.articles limit: max_posts -%}
+          <div class="blog-posts__item blog-posts__item--{{ per_row }} blog-posts__item--{{ aspect_ratio }}" data-slide>
+            {%- if article.image -%}
+              <a href="{{ article.url }}" class="hover">
+                {%
+                  render 'nativeImage' with
+                  image: article.image,
+                  wrapper_class: 'blog-posts__item-image borders',
+                  disable_style: disabled_image_style
+                  sizes: "(min-width: 640px) calc((100vw - 80px) / 3), calc(100vw - 40px)"
+                %}
+              </a>
+            {%- endif -%}
+            <h4 class="ff-heading fs-heading-small c-heading">
+              <a href="{{ article.url }}">{{ article.title }}</a>
+            </h4>
+            <p class="blog-posts__item-excerpt fs-body-base">
+              {{ article.excerpt_or_content | strip_html | truncate: 200 }}
+              <a href="{{ article.url }}">{{ 'sections.blog_posts.more' | t }}</a>
+            </p>
+          </div>
+        {%- endfor -%}
+
+      {%- else -%}
+        {% for i in (1..max_posts) %}
+          <div class="blog-posts__item blog-posts__item--{{ per_row }} blog-posts__item--{{ aspect_ratio }}" data-slide>
+            <div class="blog-posts__item-image placeholder-image borders">
+              {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+            </div>
+            <h4 class="ff-heading fs-heading-small">{{ 'homepage.onboarding.blog_title' | t }}</h4>
+            <div class="blog-posts__item-excerpt fs-body-base">{{ 'homepage.onboarding.blog_excerpt' | t }}</div>
+          </div>
+        {% endfor %}
+      {%- endif -%}
+
+      {% render 'carousel-pagination' %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Blog posts",
+  "class": "inline-section",
+  "disabled_on": {
+    "groups": ["header", "custom.overlay"],
+    "templates": ["password"]
+  },
+  "settings": [
+    {
+      "id": "title",
+      "type": "text",
+      "label": "t:sections.blog_posts.settings.title.label",
+      "default": "Blog posts"
+    },
+    {
+      "id": "blog",
+      "type": "blog",
+      "label": "t:sections.blog_posts.settings.blog.label"
+    },
+    {
+      "id": "per_row",
+      "type": "range",
+      "label": "t:sections.blog_posts.settings.per_row.label",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "id": "rows",
+      "type": "range",
+      "label": "t:sections.blog_posts.settings.rows.label",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "default": 1
+    },
+    {
+      "id": "aspect_ratio",
+      "type": "select",
+      "label": "t:shared.aspect_ratio.label",
+      "options": [
+        { "label": "t:shared.aspect_ratio.options.natural", "value": "natural" },
+        { "label": "t:shared.aspect_ratio.options.square", "value": "square" },
+        { "label": "t:shared.aspect_ratio.options.landscape", "value": "landscape" },
+        { "label": "t:shared.aspect_ratio.options.portrait", "value": "portrait" }
+      ],
+      "default": "square"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.blog_posts.presets.name",
+      "category": "Blog"
+    }
+  ]
+}
+{% endschema %}

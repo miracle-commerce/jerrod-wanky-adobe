@@ -1,0 +1,174 @@
+{%- assign image = section.settings.image -%}
+{%- assign image_position = section.settings.image_position -%}
+{%- assign heading = section.settings.title -%}
+{%- assign subheading = section.settings.subheading -%}
+{%- assign link = section.settings.link -%}
+{%- assign link_text = section.settings.link_text -%}
+{%- assign contrast = section.settings.enable_contrast -%}
+{%- assign full_width = section.settings.enable_full_width -%}
+{%- assign blocks = section.blocks -%}
+
+<section
+  class="
+    map
+    map--{{ image_position }}
+    borders-nfw
+    {% if contrast %}contrast{% endif %}
+    {% if full_width %}full-width{% endif %}
+  "
+  data-section-id="{{ section.id }}"
+  data-section-type="map"
+>
+  <div class="map__image">
+    {%- if image != blank -%}
+      {% render 'flexible-image' with image: image %}
+    {%- else -%}
+      <div class="placeholder-image">
+        {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+      </div>
+    {%- endif -%}
+  </div>
+
+  <div class="map__content">
+    {%- if heading != blank -%}
+      <h3 class="map__heading ff-heading fs-page-heading c-heading">{{ heading }}</h3>
+    {%- endif -%}
+
+    {%- if subheading != blank -%}
+      <p class="map__subheading ff-body fs-primary-body c-subheading">{{ subheading }}</p>
+    {%- endif -%}
+
+    {%- if blocks.size > 0 -%}
+      <div class="map__blocks">
+        {%- for block in blocks -%}
+          <div class="map__block">
+            {%- if block.settings.title != blank -%}
+              <h4 class="map__block-heading ff-heading fs-body-base c-heading">{{ block.settings.title }}</h4>
+            {%- endif -%}
+
+            {%- if block.settings.text != blank -%}
+              <div class="map__block-subheading ff-body fs-body-base c-body">{{ block.settings.text }}</div>
+            {%- endif -%}
+          </div>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    {%- if link != blank and link_text != blank -%}
+      <div class="map__button">
+        <a class="btn btn--primary" href="{{ link }}">{{ link_text }}</a>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "t:sections.map.name",
+  "class": "grid-section",
+  "disabled_on": {
+    "groups": ["header", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "id": "image",
+      "type": "image_picker",
+      "label": "t:sections.map.settings.image.label",
+      "info": "We recommend using an image where the height is greater than the width."
+    },
+    {
+      "id": "image_position",
+      "type": "select",
+      "label": "t:sections.map.settings.image_position.label",
+      "options": [
+        { "value": "left", "label": "t:sections.map.settings.image_position.options.left" },
+        { "value": "right", "label": "t:sections.map.settings.image_position.options.right" }
+      ],
+      "default": "left"
+    },
+    {
+      "id": "title",
+      "type": "text",
+      "label": "t:sections.map.settings.title.label",
+      "default": "Map section"
+    },
+    {
+      "id": "subheading",
+      "type": "text",
+      "label": "t:sections.map.settings.subheading.label",
+      "default": "Use this section to show off your physical retail location."
+    },
+    {
+      "id": "link",
+      "type": "url",
+      "label": "t:sections.map.settings.link.label",
+      "default": "/"
+    },
+    {
+      "id": "link_text",
+      "type": "text",
+      "label": "t:sections.map.settings.link_text.label",
+      "default": "Get directions"
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "id": "enable_contrast",
+      "type": "checkbox",
+      "label": "t:sections.map.settings.enable_contrast.label",
+      "info": "t:sections.map.settings.enable_contrast.info",
+      "default": true
+    },
+    {
+      "id": "enable_full_width",
+      "type": "checkbox",
+      "label": "t:shared.enable_full_width.label",
+      "info": "t:shared.enable_full_width.info",
+      "default": false
+    }
+  ],
+  "blocks": [
+    {
+      "type": "text",
+      "name": "Text",
+      "limit": 2,
+      "settings": [
+        {
+          "id": "title",
+          "type": "text",
+          "label": "t:sections.map.blocks.settings.title.label"
+        },
+        {
+          "id": "text",
+          "type": "richtext",
+          "label": "t:sections.map.blocks.settings.text.label"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.map.presets.name",
+      "category": "Promotional",
+      "blocks": [
+        {
+          "type": "text",
+          "settings": {
+            "title": "Hours",
+            "text": "<p>Weekdays: 10am – 5pm<br/>Saturdays: 11am – 5pm<br/>Sundays: 12pm – 4pm</p>"
+          }
+        },
+        {
+          "type": "text",
+          "settings": {
+            "title": "Address",
+            "text": "<p>123 Water St.<br/>Vancouver, BC  F1L 2U3<br/>(604) 000-000</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

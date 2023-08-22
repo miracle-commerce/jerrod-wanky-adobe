@@ -1,0 +1,44 @@
+{%- assign total_blocks = blocks | size -%}
+
+<section
+  class="collection-list s-inline-section"
+  data-section-id="{{ section.id }}"
+  data-section-type="collection-list"
+>
+  {% render 'section-header', heading: heading, url: routes.collections_url %}
+
+  <div class="collection-list__wrapper">
+    <div class="collection-list__grid mobile-carousel" data-slider>
+      {%- for block in blocks -%}
+        {%- assign collection = block.value | default: collections[block.settings.collection] -%}
+
+        <div
+          class="collection-list__item collection-list__item--{{ per_row }}"
+          data-index="{{ forloop.index0 }}"
+          data-slide
+          {{ block.shopify_attributes }}
+        >
+          {% render 'collection-item' with
+            collection: collection,
+            aspect_ratio: aspect_ratio
+          %}
+        </div>
+      {%- else -%}
+        {%- for i in (1..per_row) -%}
+          <div
+            class="collection-list__item collection-list__item--{{ per_row }}"
+            data-index="{{ forloop.index0 }}"
+            data-slide
+          >
+            {% render 'collection-item' with
+              collection: empty,
+              aspect_ratio: aspect_ratio
+            %}
+          </div>
+        {%- endfor -%}
+      {%- endfor -%}
+
+      {% render 'carousel-pagination' %}
+    </div>
+  </div>
+</section>

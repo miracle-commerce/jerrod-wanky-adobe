@@ -1,0 +1,169 @@
+{% liquid
+  assign settings = section.settings
+  assign testimonials = section.blocks
+  assign aspect_ratio = settings.aspect_ratio
+
+  assign disabled_image_style = false
+
+  if aspect_ratio != 'natural'
+    assign disabled_image_style = true
+  endif
+%}
+
+<section
+  class="testimonials s-inline-section"
+  data-section-id="{{ section.id }}"
+  data-section-type="testimonials"
+>
+  {% render 'section-header', heading: settings.title, link_text: settings.link_text, url: settings.link %}
+
+  <div class="testimonials__items mobile-carousel" data-slider>
+    {%- for testimonial in testimonials -%}
+      {%- if testimonial.settings.image != blank or testimonial.settings.testimonial != blank -%}
+        <div
+          class="testimonials__item testimonials__item--{{ aspect_ratio }} testimonials__item--{{ settings.per_row }}"
+          data-slide
+          data-index="{{ forloop.index0 }}"
+          {{ testimonial.shopify_attributes }}
+        >
+          {%- if testimonial.settings.image != blank -%}
+            {% render 'image',
+              image: testimonial.settings.image,
+              wrapper_class: 'testimonials__image borders',
+              focal_point: 'image_presentation',
+              disable_style: disabled_image_style
+            %}
+          {%- endif -%}
+
+          {%- if testimonial.settings.testimonial != blank -%}
+            <div class="fs-body-base">{{ testimonial.settings.testimonial }}</div>
+          {%- endif -%}
+          {%- if testimonial.settings.author != blank -%}
+            <p class="testimonials__author fs-body-base">{{ testimonial.settings.author }}</p>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+
+    {%- else -%}
+      {%- for i in (1..settings.per_row) -%}
+        <div
+          class="testimonials__item testimonials__item--{{ settings.per_row }}"
+          data-slide
+          data-index="{{ forloop.index0 }}"
+        >
+          <div class="placeholder-image testimonials__image borders">
+            {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+          </div>
+          <div class="fs-body-base">
+            <p>{{ 'sections.testimonials.placeholder.quote' | t }}</p>
+          </div>
+          <p class="testimonials__author fs-body-base">{{ 'sections.testimonials.placeholder.author' | t }}</p>
+        </div>
+      {%- endfor -%}
+    {%- endfor -%}
+
+    {% render 'carousel-pagination' %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "t:sections.testimonials.name",
+  "class": "inline-section",
+  "disabled_on": {
+    "groups": ["header", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "id": "title",
+      "type": "text",
+      "label": "t:sections.testimonials.settings.title.label",
+      "default": "Testimonials"
+    },
+    {
+      "id": "link_text",
+      "type": "text",
+      "label": "t:sections.testimonials.settings.link_text.label",
+      "default": "See all"
+    },
+    {
+      "id": "link",
+      "type": "url",
+      "label": "t:sections.testimonials.settings.link.label"
+    },
+    {
+      "id": "aspect_ratio",
+      "type": "select",
+      "label": "t:shared.aspect_ratio.label",
+      "options": [
+        { "value": "natural", "label": "t:shared.aspect_ratio.options.natural" },
+        { "value": "square", "label": "t:shared.aspect_ratio.options.square" },
+        { "value": "landscape", "label": "t:shared.aspect_ratio.options.landscape" },
+        { "value": "portrait", "label": "t:shared.aspect_ratio.options.portrait" }
+      ],
+      "default": "natural"
+    },
+    {
+      "id": "per_row",
+      "type": "range",
+      "label": "t:sections.testimonials.settings.per_row.label",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    }
+  ],
+  "blocks": [
+    {
+      "type": "testimonial",
+      "name": "t:sections.testimonials.blocks.name",
+      "settings": [
+        {
+          "id": "image",
+          "type": "image_picker",
+          "label": "t:sections.testimonials.blocks.settings.image.label"
+        },
+        {
+          "id": "testimonial",
+          "type": "richtext",
+          "label": "t:sections.testimonials.blocks.settings.testimonial.label"
+        },
+        {
+          "id": "author",
+          "type": "text",
+          "label": "t:sections.testimonials.blocks.settings.author.label"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.testimonials.presets.name",
+      "category": "Text",
+      "blocks": [
+        {
+          "type": "testimonial",
+          "settings": {
+            "testimonial": "<p>\"Add quotes from your customers here. Anything positive is great to include, even if it's just something about how fast shipping was or how great you were to deal with.\"</p>",
+            "author": "Happy customer"
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "testimonial": "<p>\"Add quotes from your customers here. Anything positive is great to include, even if it's just something about how fast shipping was or how great you were to deal with.\"</p>",
+            "author": "Happy customer"
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "testimonial": "<p>\"Add quotes from your customers here. Anything positive is great to include, even if it's just something about how fast shipping was or how great you were to deal with.\"</p>",
+            "author": "Happy customer"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

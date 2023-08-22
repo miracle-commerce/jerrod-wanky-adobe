@@ -1,0 +1,22 @@
+<button
+  class="pf-information-popup-trigger fs-body-base"
+  type="button"
+  data-popup-trigger
+  data-modal-content-id="modal-{{ popup_page_target }}-{{ block.id }}"
+  href="{{ popup_page.url }}"
+>
+  {{ text }}
+</button>
+<div
+  id="modal-{{ popup_page_target }}-{{ block.id }}"
+  class="information-popup__content modal-content"
+  aria-modal="true"
+>
+  {%- if show_page_title -%}
+    <h2 class="ff-heading fs-heading-large">{{ popup_page.title }}</h2>
+  {%- endif -%}
+
+  <div class="rte non-page-rte">
+  {{ popup_page.content }}
+  </div>
+</div>

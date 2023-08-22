@@ -1,0 +1,16 @@
+<div class="modal popover" data-modal>
+  <div class="modal__wash"></div>
+  <div class="modal__inner" data-scroll-lock-ignore>
+    <div class="modal__header">
+      <button
+        type="button"
+        data-modal-close
+        class="modal__close-icon"
+        aria-label="{{ 'general.accessibility.close_modal' | t }}"
+      >
+        {% render 'icon-button' with small: true, icon: 'close' %}
+      </button>
+    </div>
+    <div class="modal__content"></div>
+  </div>
+</div>

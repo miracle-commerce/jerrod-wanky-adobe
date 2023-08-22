@@ -1,0 +1,92 @@
+{% liquid
+  assign per_row = section.settings.per_row
+  assign blocks = section.blocks
+  assign display = section.settings.display_type
+%}
+
+<div class="s-inline-section">
+  <div class="list-collections__header">
+    <h1 class="list-collections__heading ff-heading fs-heading-base c-heading">{{ page_title }}</h1>
+  </div>
+
+  <div class="grid">
+    {% if display == 'all' %}
+      {% for collection in collections %}
+        <div class="grid__item grid__item--{{ per_row }}">
+          {% render 'collection-item' with
+            collection: collection,
+            aspect_ratio: section.settings.aspect_ratio
+          %}
+        </div>
+      {% endfor %}
+    {% else %}
+      {% for block in blocks %}
+        {%- assign collection = collections[block.settings.collection] -%}
+        <div class="grid__item grid__item--{{ per_row }}">
+          {% render 'collection-item' with
+            collection: collection,
+            aspect_ratio: section.settings.aspect_ratio
+          %}
+        </div>
+      {% endfor %}
+    {% endif %}
+  </div>
+
+</div>
+
+
+{% schema %}
+  {
+    "name": "t:sections.list_collections.name",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "t:sections.list_collections.settings.explanation"
+      },
+      {
+        "id": "display_type",
+        "type": "radio",
+        "label": "t:sections.list_collections.settings.display_type.label",
+        "default": "all",
+        "options": [
+          { "value": "all", "label": "All" },
+          { "value": "selected", "label": "Selected" }
+        ]
+      },
+      {
+        "type": "range",
+        "id": "per_row",
+        "label": "t:sections.list_collections.settings.per_row.label",
+        "min": 2,
+        "max": 4,
+        "step": 1,
+        "default": 3
+      },
+      {
+        "id": "aspect_ratio",
+        "type": "select",
+        "label": "t:shared.aspect_ratio.label",
+        "options": [
+          { "value": "natural", "label": "t:shared.aspect_ratio.options.natural" },
+          { "value": "square", "label": "t:shared.aspect_ratio.options.square" },
+          { "value": "landscape", "label": "t:shared.aspect_ratio.options.landscape" },
+          { "value": "portrait", "label": "t:shared.aspect_ratio.options.portrait" }
+        ],
+        "default": "natural"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "collection",
+        "name": "t:sections.list_collections.blocks.name",
+        "settings": [
+          {
+            "id": "collection",
+            "type": "collection",
+            "label": "t:sections.list_collections.blocks.settings.collection.label"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

@@ -1,0 +1,9 @@
+<div class="comment__content fs-body-base rte">
+  {{ comment.content }}
+</div>
+<div class="comment__meta fs-body-base">
+  <span class="comment__meta-item">{{ comment.author }}</span>
+  {% if comment.created_at != blank %}
+    <span class="comment__meta-item">{{ 'blogs.article.on' | t }} {{ comment.created_at | time_tag: format: 'date' }}</span>
+  {% endif %}
+</div>

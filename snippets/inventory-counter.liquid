@@ -1,0 +1,65 @@
+{%- liquid
+  assign inventory_max_to_num = inventory_max | plus: 0
+  assign low_inventory_threshold_to_num = low_inventory_threshold | plus: 0
+
+  assign stock_countdown_progress = current_variant.inventory_quantity | divided_by: inventory_max_to_num | times: 100.0 | at_least: 0
+
+  if inventory_in_stock_message != blank
+    assign prepended_message = inventory_in_stock_message | prepend: ' — '
+  endif
+-%}
+
+<div
+  class="inventory-counter fs-body-base"
+  data-inventory-counter
+  data-low-inventory-threshold="{{ low_inventory_threshold }}"
+  data-stock-countdown-max="{{ inventory_max }}"
+  data-show-untracked-quantity="{{ show_untracked_quantity }}"
+  data-unavailable-text="{{ 'products.inventory.unavailable' | t }}"
+>
+  <div class="inventory-counter__message-wrapper">
+    <span class="inventory-counter__label">{{ 'products.inventory.label' | t }}</span>
+    <span class="inventory-counter__message"></span>
+  </div>
+  <span class="inventory-counter__bar">
+    <span class="inventory-counter__bar-progress" style="width: 100%;"></span>
+  </span>
+
+  <script type="application/json" data-product-inventory-json>
+    {
+      "inventory": {
+        {%- for variant in product.variants -%}
+          {%- if variant.available -%}
+            {%- if variant.inventory_management == nil and show_untracked_quantity -%}
+              {%- capture inventory_message -%}{{ 'products.inventory.in_stock' | t }}{%- endcapture -%}
+            {%- else -%}
+              {%- if variant.inventory_management and variant.inventory_quantity > 0 and low_inventory_threshold_to_num > 0 -%}
+                {%- if variant.inventory_quantity <= low_inventory_threshold_to_num -%}
+                  {%- capture inventory_message -%}{{ 'products.inventory.low_stock' | t }}{%- endcapture -%}
+                {%- else -%}
+                  {%- capture inventory_message -%}{{ 'products.inventory.in_stock' | t }}{%- endcapture -%}
+                {%- endif -%}
+              {%- else -%}
+                {%- if variant.inventory_policy == 'deny' and variant.inventory_quantity <= 0 and variant.requires_shipping -%}
+                  {%- capture inventory_message -%}{{ 'products.inventory.sold_out' | t }}{%- endcapture -%}
+                {%- elsif variant.inventory_policy == 'continue' and variant.inventory_quantity <= 0 and variant.requires_shipping -%}
+                  {%- capture inventory_message -%}{{ 'products.inventory.backordered' | t }}{%- endcapture -%}
+                {%- else %}
+                  {%- capture inventory_message -%}{%- endcapture -%}
+                {%- endif -%}
+              {%- endif -%}
+            {%- endif -%}
+          {%- else -%}
+            {%- capture inventory_message -%}{{ 'products.inventory.sold_out' | t }}{%- endcapture -%}
+          {%- endif -%}
+          "{{ variant.id }}": {
+            "inventory_management": {{ variant.inventory_management | json }},
+            "inventory_policy": {{ variant.inventory_policy | json }},
+            "inventory_quantity": {{ variant.inventory_quantity | json }},
+            "inventory_message": {{ inventory_message | json }}
+          }{% unless forloop.last %},{% endunless %}
+        {%- endfor -%}
+      }
+    }
+  </script>
+</div>
